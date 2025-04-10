@@ -32,34 +32,37 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100">
       <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Welcome to GameTracker</h1>
 
-      <h1>Welcome to GameTracker</h1>
-
-      {error ? (
-        <div>{error}</div>
-      ) : (
-        <>
-          <h2>Popular Games Right Now</h2>
-          {games.map((game) => (
-            <Card>
-              <CardHeader>
-                <CardTitle>{game.name}</CardTitle>
-                <CardDescription>
-                  {genres.map((genre) => (
-                    <p>{genre.name}</p>
-                  ))}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Rating: {game.rating}/5</p>
-                <p>Released: {game.released}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </>
-      )}
-    </>
+        {error ? (
+          <div className="text-red-500">{error}</div>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold mb-6">
+              Popular Games Right Now
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {games.map((game) => (
+                <Card
+                  key={game.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
+                  <CardHeader>
+                    <CardTitle>{game.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Rating: {game.rating}/5</p>
+                    <p className="text-gray-600">Released: {game.released}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 };

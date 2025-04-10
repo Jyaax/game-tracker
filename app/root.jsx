@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HomePage } from './pages/home';
 import { GamesPage } from './pages/games';
 import { ProfilePage } from './pages/profile';
-import './app.css';
+import './globals.css';
 
 function App() {
   return (
