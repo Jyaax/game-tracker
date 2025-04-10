@@ -32,13 +32,13 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Welcome to GameTracker</h1>
 
         {error ? (
-          <div className="text-red-500">{error}</div>
+          <div className="text-destructive">{error}</div>
         ) : (
           <>
             <h2 className="text-2xl font-semibold mb-6">
@@ -58,8 +58,17 @@ export const HomePage = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">Rating: {game.rating}/5</p>
-                    <p className="text-gray-600">Released: {game.released}</p>
+                    <img
+                      src={game.background_image}
+                      alt={game.name}
+                      className="w-full h-48 object-cover rounded-md mb-4"
+                    />
+                    <p className="text-muted-foreground">
+                      Rating: {game.rating}/5
+                    </p>
+                    <p className="text-muted-foreground">
+                      Released: {game.released}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
