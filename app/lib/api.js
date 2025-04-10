@@ -15,7 +15,7 @@ export async function getGameDetails(id) {
 
 export async function getPopularGames() {
   const response = await fetch(
-    `${BASE_URL}/games?key=${API_KEY}&ordering=-rating&page_size=10`
+    `${BASE_URL}/games?key=${API_KEY}&ordering=-rating&exclude_additions=true&exclude_tags=sex,nudity&platforms=4&page_size=10`
   );
   return response.json();
 }

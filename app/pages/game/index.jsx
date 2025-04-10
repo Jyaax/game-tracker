@@ -1,16 +1,17 @@
-import { Navbar } from '../../components/Navbar';
+import { Navbar } from '@/components/Navbar';
 import { useEffect, useState } from 'react';
-import { getPopularGames } from '../../lib/api';
+import { getGameDetails } from '@/lib/api';
 
-export function GamePage() {
-  const [games, setGames] = useState([]);
+export function GamePage({ gameId }) {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchGames() {
+    async function fetchGameData() {
       try {
-        const data = await getPopularGames();
-        setGames(data.results);
+        const data = await getGameDetails(gameId);
+        setData(data);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching games:', error);
       } finally {
@@ -18,8 +19,8 @@ export function GamePage() {
       }
     }
 
-    fetchGames();
-  }, []);
+    fetchGameData();
+  }, [gameId]);
 
   if (loading) {
     return (
