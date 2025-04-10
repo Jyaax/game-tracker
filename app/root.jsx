@@ -6,6 +6,7 @@ import { GamePage } from './pages/game';
 import { ProfilePage } from './pages/profile';
 import { Settings } from './pages/settings';
 import { BrowsePage } from './pages/browse';
+import { Layout } from './components/Layout';
 import './globals.css';
 
 function App() {
@@ -14,18 +15,58 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/games" element={<GamePage />} />
-          <Route path="/games/:id" element={<GamePage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/browse" element={<BrowsePage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <HomePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/games"
+          element={
+            <Layout>
+              <GamePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/games/:id"
+          element={
+            <Layout>
+              <GamePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <ProfilePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Layout>
+              <Settings />
+            </Layout>
+          }
+        />
+        <Route
+          path="/browse"
+          element={
+            <Layout>
+              <BrowsePage />
+            </Layout>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
