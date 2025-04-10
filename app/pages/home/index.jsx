@@ -5,10 +5,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export const HomePage = () => {
   const [games, setGames] = useState([]);
@@ -46,12 +46,16 @@ export const HomePage = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {games.map((game) => (
-                <Card
-                  key={game.id}
-                  className="hover:shadow-lg transition-shadow"
-                >
+                <Card key={game.id}>
                   <CardHeader>
                     <CardTitle>{game.name}</CardTitle>
+                    <CardDescription>
+                      {game.genres?.map((genre) => (
+                        <Badge variant="outline" key={genre.id}>
+                          {genre.name}
+                        </Badge>
+                      ))}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600">Rating: {game.rating}/5</p>
