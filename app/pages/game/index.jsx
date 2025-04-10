@@ -2,7 +2,7 @@ import { Navbar } from '../../components/Navbar';
 import { useEffect, useState } from 'react';
 import { getPopularGames } from '../../lib/api';
 
-export function GamesPage() {
+export function GamePage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
