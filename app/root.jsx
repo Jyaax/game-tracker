@@ -14,16 +14,18 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/games" element={<GamePage />} />
-        <Route path="/games/:id" element={<GamePage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/browse" element={<BrowsePage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="min-h-screen w-full">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/games" element={<GamePage />} />
+          <Route path="/games/:id" element={<GamePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/browse" element={<BrowsePage />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
