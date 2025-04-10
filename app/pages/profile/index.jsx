@@ -1,6 +1,6 @@
 import { Navbar } from '../../components/Navbar';
 
-export function ProfilePage() {
+export const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -21,4 +21,4 @@ export function ProfilePage() {
       </main>
     </div>
   );
-}
+};

@@ -1,16 +1,19 @@
 import { Navbar } from '@/components/Navbar';
 import { useEffect, useState } from 'react';
 import { getGameDetails } from '@/lib/api';
+import { useParams } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
-export function GamePage({ gameId }) {
-  const [data, setData] = useState([]);
+export const GamePage = () => {
+  const { id } = useParams();
+  const [gameData, setGameData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchGameData() {
       try {
-        const data = await getGameDetails(gameId);
-        setData(data);
+        const data = await getGameDetails(id);
+        setGameData(data);
         console.log(data);
       } catch (error) {
         console.error('Error fetching games:', error);
@@ -20,7 +23,7 @@ export function GamePage({ gameId }) {
     }
 
     fetchGameData();
-  }, [gameId]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -34,9 +37,40 @@ export function GamePage({ gameId }) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div>
       <Navbar />
-      <p>AAAAAAAAAAAAAAAAh</p>
+
+      <h1>{gameData.name}</h1>
+      <p>{gameData.alternative_names}</p>
+      <img
+        src={gameData.background_image}
+        alt={gameData.name}
+        className="w-96 h-auto object-cover rounded-md mb-4"
+      />
+      <div dangerouslySetInnerHTML={{ __html: gameData.description }} />
+      {gameData.developers.map((developer) => (
+        <p key={developer.id}>{developer.name}</p>
+      ))}
+      {gameData.genres.map((genre) => (
+        <Badge key={genre.id}>{genre.name}</Badge>
+      ))}
+      {gameData.platforms.map((platform) => (
+        <Badge key={platform.platform.id}>{platform.platform.name}</Badge>
+      ))}
+      <p>{gameData.playtime}</p>
+      {gameData.publishers.map((publisher) => (
+        <p key={publisher.id}>{publisher.name}</p>
+      ))}
+      <p>{gameData.rating}</p>
+      {gameData.ratings.map((rating) => (
+        <p key={rating.id}>
+          {rating.title} ({rating.percent})
+        </p>
+      ))}
+      {gameData.tags.map((tag) => (
+        <Badge key={tag.id}>{tag.name}</Badge>
+      ))}
+      <p>{gameData.released ? gameData.released : 'Not released yet'}</p>
     </div>
   );
-}
+};
