@@ -9,4 +9,15 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    hmr: {
+      overlay: true,
+    },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+  },
 });
