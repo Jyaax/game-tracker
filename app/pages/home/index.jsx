@@ -12,7 +12,6 @@ export const HomePage = () => {
     async function loadGames() {
       try {
         const data = await getPopularGames();
-        console.log('jeux:', data.results);
         setGames(data.results.slice(0, 20));
       } catch (err) {
         console.error('Erreur:', err);

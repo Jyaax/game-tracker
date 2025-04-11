@@ -14,11 +14,9 @@ export const ProfilePage = () => {
           data: { user },
           error: authError,
         } = await supabase.auth.getUser();
-        console.log(user);
         if (authError) throw authError;
 
         if (user) {
-          // Récupérer les données de la table users liées à l'utilisateur
           const { data, error: dbError } = await supabase
             .from('users')
             .select('*')
@@ -26,13 +24,10 @@ export const ProfilePage = () => {
             .single();
 
           if (dbError) throw dbError;
-
-          // Fusionner les données de l'authentification et de la table users
           setUser({
             ...user,
             ...data,
           });
-          console.log(user);
         }
       } catch (err) {
         setError(err.message);

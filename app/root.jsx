@@ -7,7 +7,6 @@ import { LibraryPage } from './pages/library';
 import { ProfilePage } from './pages/profile';
 import { Settings } from './pages/settings';
 import { BrowsePage } from './pages/browse';
-import { LoginPage } from './pages/login';
 import { Layout } from './components/Layout';
 import { AuthProvider } from './contexts/AuthContext';
 import './globals.css';
@@ -29,7 +28,6 @@ function App() {
               </Layout>
             }
           />
-          <Route path="/login" element={<LoginPage />} />
           <Route
             path="/games"
             element={

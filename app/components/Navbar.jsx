@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
-import { CircleUserRound, LogIn, LogOut } from 'lucide-react';
+import { CircleUserRound, LogOut } from 'lucide-react';
+import { AuthDialog } from './authDialog';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -85,11 +86,7 @@ export const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login">
-                <Button variant="ghost" size="icon">
-                  <LogIn className="h-4 w-4" />
-                </Button>
-              </Link>
+              <AuthDialog />
             )}
           </div>
         </div>

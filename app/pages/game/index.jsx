@@ -13,7 +13,6 @@ export const GamePage = () => {
       try {
         const data = await getGameDetails(id);
         setGameData(data);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching games:', error);
       } finally {
