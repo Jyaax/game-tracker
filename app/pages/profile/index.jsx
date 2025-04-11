@@ -1,19 +1,33 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+
 export const ProfilePage = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function getUserData() {
+      const { data } = await supabase.from('users').select();
+      console.log(data);
+      if (data.length > 0) {
+        setUsers(data[0]);
+        setLoading(false);
+      }
+    }
+
+    getUserData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-destructive">Error: {error}</div>;
+
   return (
-    <>
-      <h1 className="text-4xl font-bold mb-6">Profile</h1>
-      <div className="max-w-md mx-auto">
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold">Username</h2>
-            <p className="text-muted-foreground">Your username here</p>
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">Games Played</h2>
-            <p className="text-muted-foreground">0 games</p>
-          </div>
-        </div>
+    <div className="space-y-4">
+      <h1 className="text-4xl font-bold mb-6">Users</h1>
+      <div className="grid gap-4">
+        <p>{users.pseudo}</p>
       </div>
-    </>
+    </div>
   );
 };
