@@ -17,22 +17,16 @@ export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
     try {
       await login(email, password);
       navigate('/');
     } catch (error) {
       setError(error.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -70,8 +64,8 @@ export const LoginPage = () => {
             {error && <p className="text-sm text-red-500">{error}</p>}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Loading...' : 'Login'}
+            <Button type="submit" className="w-full">
+              Login
             </Button>
           </CardFooter>
         </form>
