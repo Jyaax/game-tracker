@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HomePage } from './pages/home';
 import { GamePage } from './pages/game';
+import { LibraryPage } from './pages/library';
 import { ProfilePage } from './pages/profile';
 import { Settings } from './pages/settings';
 import { BrowsePage } from './pages/browse';
@@ -42,6 +43,22 @@ function App() {
           }
         />
         <Route
+          path="/browse"
+          element={
+            <Layout>
+              <BrowsePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/library"
+          element={
+            <Layout>
+              <LibraryPage />
+            </Layout>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <Layout>
@@ -54,14 +71,6 @@ function App() {
           element={
             <Layout>
               <Settings />
-            </Layout>
-          }
-        />
-        <Route
-          path="/browse"
-          element={
-            <Layout>
-              <BrowsePage />
             </Layout>
           }
         />

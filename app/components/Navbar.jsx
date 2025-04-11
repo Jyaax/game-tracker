@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { CircleUserRound } from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -34,7 +34,7 @@ export const Navbar = () => {
                     asChild
                     className={navigationMenuTriggerStyle()}
                   >
-                    <Link to="/profile">Profile</Link>
+                    <Link to="/library">Library</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -42,9 +42,9 @@ export const Navbar = () => {
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
             <ThemeToggle />
-            <Link to="/settings">
+            <Link to="/profile">
               <Button variant="ghost" size="icon">
-                <Settings className="h-4 w-4" />
+                <CircleUserRound className="h-4 w-4" />
               </Button>
             </Link>
           </div>
