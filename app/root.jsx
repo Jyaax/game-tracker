@@ -7,7 +7,9 @@ import { LibraryPage } from './pages/library';
 import { ProfilePage } from './pages/profile';
 import { Settings } from './pages/settings';
 import { BrowsePage } from './pages/browse';
+import { LoginPage } from './pages/login';
 import { Layout } from './components/Layout';
+import { AuthProvider } from './contexts/AuthContext';
 import './globals.css';
 
 function App() {
@@ -16,66 +18,69 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <HomePage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/games"
-          element={
-            <Layout>
-              <GamePage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/games/:id"
-          element={
-            <Layout>
-              <GamePage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/browse"
-          element={
-            <Layout>
-              <BrowsePage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/library"
-          element={
-            <Layout>
-              <LibraryPage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <Layout>
-              <ProfilePage />
-            </Layout>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <Layout>
-              <Settings />
-            </Layout>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <HomePage />
+              </Layout>
+            }
+          />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/games"
+            element={
+              <Layout>
+                <GamePage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/games/:id"
+            element={
+              <Layout>
+                <GamePage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/browse"
+            element={
+              <Layout>
+                <BrowsePage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/library"
+            element={
+              <Layout>
+                <LibraryPage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <Layout>
+                <ProfilePage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <Layout>
+                <Settings />
+              </Layout>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
