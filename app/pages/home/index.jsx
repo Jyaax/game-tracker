@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { getPopularGames } from '../../lib/api';
-import { GameCard } from '@/components/gameCard';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from "react";
+import { rawgApi } from "@/api/rawg/games";
+import { GameCard } from "@/components/gameCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const HomePage = () => {
   const [games, setGames] = useState([]);
@@ -11,12 +11,12 @@ export const HomePage = () => {
   useEffect(() => {
     async function loadGames() {
       try {
-        const data = await getPopularGames();
+        const data = await rawgApi.getPopularGames();
         setGames(data.results.slice(0, 20));
       } catch (err) {
-        console.error('Erreur:', err);
+        console.error("Erreur:", err);
         setError(
-          'Impossible de charger les jeux. Vérifiez votre clé API dans .env'
+          "Impossible de charger les jeux. Vérifiez votre clé API dans .env"
         );
       } finally {
         setLoading(false);

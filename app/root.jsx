@@ -1,19 +1,20 @@
-import React, { useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { HomePage } from './pages/home';
-import { GamePage } from './pages/game';
-import { LibraryPage } from './pages/library';
-import { ProfilePage } from './pages/profile';
-import { Settings } from './pages/settings';
-import { BrowsePage } from './pages/browse';
-import { Layout } from './components/Layout';
-import { AuthProvider } from './contexts/AuthContext';
-import './globals.css';
+import React, { useEffect } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HomePage } from "./pages/home";
+import { GamePage } from "./pages/game";
+import { LibraryPage } from "./pages/library";
+import { ProfilePage } from "./pages/profile";
+import { Settings } from "./pages/settings";
+import { BrowsePage } from "./pages/browse";
+import { Layout } from "./components/Layout";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import "./globals.css";
 
 function App() {
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.add("dark");
   }, []);
 
   return (
@@ -56,7 +57,9 @@ function App() {
             path="/library"
             element={
               <Layout>
-                <LibraryPage />
+                <ProtectedRoute>
+                  <LibraryPage />
+                </ProtectedRoute>
               </Layout>
             }
           />
@@ -64,7 +67,9 @@ function App() {
             path="/profile"
             element={
               <Layout>
-                <ProfilePage />
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
               </Layout>
             }
           />
@@ -72,7 +77,9 @@ function App() {
             path="/settings"
             element={
               <Layout>
-                <Settings />
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
               </Layout>
             }
           />
@@ -82,7 +89,7 @@ function App() {
   );
 }
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

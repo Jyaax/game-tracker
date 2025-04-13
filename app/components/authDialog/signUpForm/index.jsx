@@ -1,5 +1,5 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { useForm } from 'react-hook-form';
+import { useAuth } from "@/contexts/AuthContext";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -7,24 +7,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/api/database/supabase";
 
 const formSchema = z
   .object({
-    pseudo: z.string().min(1, 'Pseudo is required'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    pseudo: z.string().min(1, "Pseudo is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
     birthDate: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 export const SignUpForm = () => {
@@ -33,11 +33,11 @@ export const SignUpForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pseudo: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      birthDate: '',
+      pseudo: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      birthDate: "",
     },
   });
 
@@ -49,29 +49,29 @@ export const SignUpForm = () => {
       );
 
       if (authError) {
-        console.error('Auth error:', authError);
+        console.error("Auth error:", authError);
         throw authError;
       }
 
       if (!authData?.user?.id) {
-        throw new Error('User creation failed - no user ID returned');
+        throw new Error("User creation failed - no user ID returned");
       }
 
-      const { error: profileError } = await supabase.from('users').insert({
+      const { error: profileError } = await supabase.from("users").insert({
         id: authData.user.id,
         pseudo: values.pseudo,
         birth_dt: values.birthDate || null,
       });
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
-        throw new Error('Failed to create user profile');
+        console.error("Profile creation error:", profileError);
+        throw new Error("Failed to create user profile");
       }
 
       form.reset();
     } catch (error) {
-      console.error('Signup error:', error);
-      form.setError('root', { message: error.message });
+      console.error("Signup error:", error);
+      form.setError("root", { message: error.message });
     }
   };
 

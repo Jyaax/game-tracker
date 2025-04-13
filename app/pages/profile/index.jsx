@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { data } from 'react-router';
+import { useState, useEffect } from "react";
+import { supabase } from "@/api/database/supabase";
 
 export const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -18,9 +17,9 @@ export const ProfilePage = () => {
 
         if (user) {
           const { data, error: dbError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
+            .from("users")
+            .select("*")
+            .eq("id", user.id)
             .single();
 
           if (dbError) throw dbError;
@@ -31,7 +30,7 @@ export const ProfilePage = () => {
         }
       } catch (err) {
         setError(err.message);
-        console.error('Error:', err);
+        console.error("Error:", err);
       } finally {
         setLoading(false);
       }
@@ -55,7 +54,6 @@ export const ProfilePage = () => {
           <p>
             Last sign in: {new Date(user?.last_sign_in_at).toLocaleDateString()}
           </p>
-          {/* Ajoutez ici les autres champs de votre table users */}
         </div>
       </div>
     </div>

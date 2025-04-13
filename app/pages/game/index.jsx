@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { getGameDetails } from '@/lib/api';
-import { useParams } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
+import { useEffect, useState } from "react";
+import { rawgApi } from "@/api/rawg/games";
+import { useParams } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 export const GamePage = () => {
   const { id } = useParams();
@@ -11,10 +11,10 @@ export const GamePage = () => {
   useEffect(() => {
     async function fetchGameData() {
       try {
-        const data = await getGameDetails(id);
+        const data = await rawgApi.getGameDetails(id);
         setGameData(data);
       } catch (error) {
-        console.error('Error fetching games:', error);
+        console.error("Error fetching games:", error);
       } finally {
         setLoading(false);
       }
@@ -61,7 +61,7 @@ export const GamePage = () => {
         {gameData.tags.map((tag) => (
           <Badge key={tag.id}>{tag.name}</Badge>
         ))}
-        <p>{gameData.released ? gameData.released : 'Not released yet'}</p>
+        <p>{gameData.released ? gameData.released : "Not released yet"}</p>
       </div>
     </>
   );

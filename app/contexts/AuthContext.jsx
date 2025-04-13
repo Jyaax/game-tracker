@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "@/api/database/supabase";
 
 const AuthContext = createContext(null);
 
@@ -38,15 +38,15 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (error) {
-        console.error('SignUp error:', error);
+        console.error("SignUp error:", error);
         throw error;
       }
 
       if (!data?.user) {
-        throw new Error('No user data returned from signUp');
+        throw new Error("No user data returned from signUp");
       }
 
-      console.log('Auth user created:', data.user);
+      console.log("Auth user created:", data.user);
       return { data, error };
     },
     logout: () => supabase.auth.signOut(),
@@ -57,6 +57,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

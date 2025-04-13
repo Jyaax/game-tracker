@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { GameCard } from '@/components/gameCard';
-import { searchGames } from '@/lib/api';
-import { SearchForm } from './searchForm';
+import { useState } from "react";
+import { GameCard } from "@/components/gameCard";
+import { rawgApi } from "@/api/rawg/games";
+import { SearchForm } from "./searchForm";
 
 export const BrowsePage = () => {
   const [games, setGames] = useState([]);
@@ -11,12 +11,12 @@ export const BrowsePage = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const searchData = await searchGames(data.searchQuery);
+      const searchData = await rawgApi.searchGames(data.searchQuery);
       setGames(searchData.results.slice(0, 20));
     } catch (err) {
-      console.error('Erreur:', err);
+      console.error("Erreur:", err);
       setError(
-        'Impossible de charger les jeux. Vérifiez votre clé API dans .env'
+        "Impossible de charger les jeux. Vérifiez votre clé API dans .env"
       );
     } finally {
       setLoading(false);
