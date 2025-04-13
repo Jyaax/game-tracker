@@ -25,7 +25,30 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     login: (email, password) =>
       supabase.auth.signInWithPassword({ email, password }),
-    signUp: (email, password) => supabase.auth.signUp({ email, password }),
+    signUp: async (email, password) => {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            email_confirmed: true, // Pour le développement
+          },
+        },
+      });
+
+      if (error) {
+        console.error('SignUp error:', error);
+        throw error;
+      }
+
+      if (!data?.user) {
+        throw new Error('No user data returned from signUp');
+      }
+
+      console.log('Auth user created:', data.user);
+      return { data, error };
+    },
     logout: () => supabase.auth.signOut(),
   };
 

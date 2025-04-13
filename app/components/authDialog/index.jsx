@@ -10,9 +10,11 @@ import {
 } from '@/components/ui/dialog';
 import { LogIn } from 'lucide-react';
 import { LoginForm } from './loginForm';
+import { SignUpForm } from './signUpForm';
 
 export const AuthDialog = () => {
   const [open, setOpen] = useState(false);
+  const [hasAccount, setHasAccount] = useState(true);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -29,7 +31,10 @@ export const AuthDialog = () => {
             Enter your credentials to access your account
           </DialogDescription>
         </DialogHeader>
-        <LoginForm />
+        {hasAccount ? <LoginForm /> : <SignUpForm />}
+        <Button variant="link" onClick={() => setHasAccount(!hasAccount)}>
+          {hasAccount ? 'Create an account' : 'Already have an account? Log in'}
+        </Button>
       </DialogContent>
     </Dialog>
   );
