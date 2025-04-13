@@ -14,10 +14,8 @@ export const HomePage = () => {
         const data = await rawgApi.getPopularGames();
         setGames(data.results.slice(0, 20));
       } catch (err) {
-        console.error("Erreur:", err);
-        setError(
-          "Impossible de charger les jeux. Vérifiez votre clé API dans .env"
-        );
+        console.error("Error:", err);
+        setError("Unable to load games. Please check your API key in .env");
       } finally {
         setLoading(false);
       }

@@ -11,9 +11,9 @@ export const ActionsButtons = ({ game, user }) => {
   const handleAddToWishlist = async () => {
     try {
       await gameService.addToWishlist(user.id, game.id);
-      console.log("Jeu ajouté à la liste de souhaits !");
+      console.log("Game added to wishlist!");
     } catch (error) {
-      console.error("Erreur lors de l'ajout à la liste de souhaits:", error);
+      console.error("Error adding to wishlist:", error);
     }
   };
 

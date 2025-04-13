@@ -13,6 +13,7 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/api/database/supabase";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -27,8 +28,9 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-export const SignUpForm = () => {
+export const SignUpForm = ({ onSwitchToLogin }) => {
   const { signUp } = useAuth();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -68,12 +70,48 @@ export const SignUpForm = () => {
         throw new Error("Failed to create user profile");
       }
 
+      setIsSuccess(true);
       form.reset();
     } catch (error) {
       console.error("Signup error:", error);
-      form.setError("root", { message: error.message });
+      if (error.message.includes("User already registered")) {
+        form.setError("root", {
+          message: "This email is already registered. Please log in instead.",
+        });
+      } else if (error.message.includes("Invalid email")) {
+        form.setError("email", {
+          message: "Please enter a valid email address",
+        });
+      } else {
+        form.setError("root", { message: error.message });
+      }
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="space-y-4">
+        <div className="text-green-600 bg-green-50 p-4 rounded-md">
+          <h3 className="font-semibold">Account created!</h3>
+          <p className="text-sm mt-2">
+            Check your email and click the confirmation link to activate your
+            account.
+          </p>
+        </div>
+        <Button
+          variant="link"
+          onClick={() => {
+            setIsSuccess(false);
+            form.reset();
+            onSwitchToLogin();
+          }}
+          className="w-full"
+        >
+          Go to login
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
@@ -160,9 +198,9 @@ export const SignUpForm = () => {
           )}
         />
         {form.formState.errors.root && (
-          <p className="text-sm text-red-500">
+          <div className="text-sm text-red-500 bg-red-50 p-2 rounded-md">
             {form.formState.errors.root.message}
-          </p>
+          </div>
         )}
         <Button type="submit" className="w-full">
           Sign Up
