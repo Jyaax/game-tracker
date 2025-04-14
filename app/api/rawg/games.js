@@ -3,10 +3,10 @@ const BASE_URL = "https://api.rawg.io/api";
 
 export const rawgApi = {
   // Fetch popular games
-  getPopularGames: async () => {
+  getPopularGames: async (page = 1) => {
     try {
       const response = await fetch(
-        `${BASE_URL}/games?key=${API_KEY}&ordering=-added&exclude_additions=true&exclude_tags=sex,nudity&platforms=4&page_size=10`
+        `${BASE_URL}/games?key=${API_KEY}&ordering=-added&exclude_additions=true&exclude_tags=sex,nudity&platforms=4&page_size=30&page=${page}`
       );
       return await response.json();
     } catch (error) {
@@ -18,7 +18,7 @@ export const rawgApi = {
   searchGames: async (query) => {
     try {
       const response = await fetch(
-        `${BASE_URL}/games?key=${API_KEY}&search=${query}&page_size=20`
+        `${BASE_URL}/games?key=${API_KEY}&search=${query}&page_size=30`
       );
       return await response.json();
     } catch (error) {
