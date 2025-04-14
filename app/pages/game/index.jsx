@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { rawgApi } from "@/api/rawg/games";
 import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { ScreenshotsCarousel } from "./screenShotsCarousel";
+import { ScreenshotsCarousel } from "./screenshotsCarousel";
 import { StoreLink } from "./storeLink";
 
 export const GamePage = () => {
