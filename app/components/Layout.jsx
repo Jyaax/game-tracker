@@ -1,4 +1,4 @@
-import { Navbar } from './Navbar';
+import { Navbar } from "./Navbar";
 
 export const Layout = ({ children }) => {
   return (
@@ -9,6 +9,14 @@ export const Layout = ({ children }) => {
           {children}
         </div>
       </main>
+      <footer className="bg-background border-t py-4">
+        <div className="w-full max-w-[1400px] mx-auto px-4 text-center text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} Game Tracker by Julie L. All rights
+            reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
