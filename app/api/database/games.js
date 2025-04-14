@@ -1,6 +1,24 @@
 import { supabase } from "@/api/database/supabase";
 
 export const gameService = {
+  // Fetch the wishlist of a user
+  getWishlist: async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("wishlist")
+        .select("*")
+        .eq("id_user", userId);
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(`Failed to fetch wishlist: ${error.message}`);
+      }
+      return data;
+    } catch (error) {
+      console.error("Error in getWishlist:", error);
+      throw error;
+    }
+  },
   // Add a game to the wishlist
   addToWishlist: async (userId, gameId) => {
     try {
@@ -20,23 +38,34 @@ export const gameService = {
       throw error;
     }
   },
-
-  // Fetch the wishlist of a user
-  getWishlist: async (userId) => {
+  // Remove a game from the wishlist
+  removeFromWishlist: async (userId, gameId) => {
     try {
       const { data, error } = await supabase
         .from("wishlist")
+        .delete()
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error in removeFromWishlist:", error);
+      throw error;
+    }
+  },
+
+  // Fetch the library of a user
+  getLibrary: async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("library")
         .select("*")
         .eq("id_user", userId);
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw new Error(`Failed to fetch wishlist: ${error.message}`);
-      }
+      if (error) throw error;
       return data;
     } catch (error) {
-      console.error("Error in getWishlist:", error);
-      throw error;
+      throw new Error("Failed to fetch library");
     }
   },
 
@@ -66,18 +95,35 @@ export const gameService = {
     }
   },
 
-  // Fetch the library of a user
-  getLibrary: async (userId) => {
+  // Update a game in the library
+  updateLibrary: async (userId, gameId, data) => {
     try {
       const { data, error } = await supabase
         .from("library")
-        .select("*")
-        .eq("user_id", userId);
-
+        .update(data)
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
       if (error) throw error;
       return data;
     } catch (error) {
-      throw new Error("Failed to fetch library");
+      console.error("Error in updateLibrary:", error);
+      throw error;
+    }
+  },
+
+  // Remove a game from the library
+  removeFromLibrary: async (userId, gameId) => {
+    try {
+      const { data, error } = await supabase
+        .from("library")
+        .delete()
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error("Error in removeFromLibrary:", error);
+      throw error;
     }
   },
 };
