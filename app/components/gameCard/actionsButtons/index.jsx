@@ -60,6 +60,8 @@ export const ActionsButtons = ({ game, user }) => {
       await gameService.addToLibrary(user.id, game.id);
       setLibrary([...library, { id_game: game.id }]);
       console.log("Game added to library!");
+      handleRemoveFromWishlist();
+      console.log("Game removed from wishlist!");
     } catch (error) {
       console.error("Error adding to library:", error);
     }
@@ -80,31 +82,32 @@ export const ActionsButtons = ({ game, user }) => {
       <div className="flex items-center gap-2 mt-2">
         <div className="group relative flex items-center">
           <div className="absolute right-full mr-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[10px] group-hover:translate-x-0">
-            {wishlist.some((item) => item.id_game === game.id) ? (
-              <Tooltip delayDuration={200}>
-                <TooltipTrigger asChild>
-                  <Heart
-                    className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
-                    fill="#ff0000"
-                    strokeWidth={1.5}
-                    stroke="#ff0000"
-                    onClick={handleRemoveFromWishlist}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Remove from wishlist</TooltipContent>
-              </Tooltip>
-            ) : (
-              <Tooltip delayDuration={200}>
-                <TooltipTrigger asChild>
-                  <Heart
-                    className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
-                    strokeWidth={1.5}
-                    onClick={handleAddToWishlist}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Add to wishlist</TooltipContent>
-              </Tooltip>
-            )}
+            {!library.some((item) => item.id_game === game.id) &&
+              (wishlist.some((item) => item.id_game === game.id) ? (
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <Heart
+                      className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
+                      fill="#ff0000"
+                      strokeWidth={1.5}
+                      stroke="#ff0000"
+                      onClick={handleRemoveFromWishlist}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Remove from wishlist</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <Heart
+                      className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
+                      strokeWidth={1.5}
+                      onClick={handleAddToWishlist}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Add to wishlist</TooltipContent>
+                </Tooltip>
+              ))}
             {library.some((item) => item.id_game === game.id) ? (
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>

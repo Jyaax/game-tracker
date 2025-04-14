@@ -111,21 +111,10 @@ export const GamePage = () => {
         {gameData.screenshots.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold">Screenshots</h2>
-            <ScreenshotsCarousel screenshots={gameData.screenshots} />
-          </div>
-        )}
-        {gameData.trailers.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold">Trailers</h2>
-            {gameData.trailers.map((trailer) => (
-              <div key={trailer.id}>
-                <h3>{trailer.name}</h3>
-                <iframe
-                  src={`https://www.youtube.com/embed/${trailer.key}`}
-                  title={trailer.name}
-                />
-              </div>
-            ))}
+            <ScreenshotsCarousel
+              screenshots={gameData.screenshots}
+              trailers={gameData.trailers}
+            />
           </div>
         )}
       </div>
