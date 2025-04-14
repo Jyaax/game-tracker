@@ -2,17 +2,39 @@ import { useEffect, useState } from "react";
 import { rawgApi } from "@/api/rawg/games";
 import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { ScreenshotsCarousel } from "./screenShotsCarousel";
+import { StoreLink } from "./storeLink";
 
 export const GamePage = () => {
   const { id } = useParams();
-  const [gameData, setGameData] = useState([]);
+  const [gameData, setGameData] = useState({
+    details: null,
+    trailers: null,
+    stores: null,
+    screenshots: null,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchGameData() {
       try {
-        const data = await rawgApi.getGameDetails(id);
-        setGameData(data);
+        const details = await rawgApi.getGameDetails(id);
+        const trailers = await rawgApi.getGameTrailers(id);
+        const stores = await rawgApi.getGameStores(id);
+        const screenshots = await rawgApi.getGameScreenshots(id);
+
+        setGameData({
+          details,
+          trailers: trailers?.results,
+          stores: stores?.results,
+          screenshots: screenshots?.results,
+        });
+        console.log("Game Data Structure:", {
+          details,
+          trailers: trailers?.results,
+          stores: stores?.results,
+          screenshots: screenshots?.results,
+        });
       } catch (error) {
         console.error("Error fetching games:", error);
       } finally {
@@ -24,45 +46,89 @@ export const GamePage = () => {
   }, [id]);
 
   if (loading) {
-    return <p>Loading games...</p>;
+    return <p>Loading game data...</p>;
   }
 
+  const { details } = gameData;
+
   return (
-    <>
-      <h1 className="text-4xl font-bold mb-6">{gameData.name}</h1>
-      <div className="container mx-auto px-4 py-8">
-        <h1>{gameData.name}</h1>
-        <p>{gameData.alternative_names}</p>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-6">{details.name}</h1>
+
+      <div className="flex flex-col gap-8">
         <img
-          src={gameData.background_image}
-          alt={gameData.name}
-          className="w-96 h-auto object-cover rounded-md mb-4"
+          src={details.background_image}
+          alt={details.name}
+          className="w-full max-w-2xl h-auto object-cover rounded-md"
         />
-        <div dangerouslySetInnerHTML={{ __html: gameData.description }} />
-        {gameData.developers.map((developer) => (
-          <p key={developer.id}>{developer.name}</p>
-        ))}
-        {gameData.genres.map((genre) => (
-          <Badge key={genre.id}>{genre.name}</Badge>
-        ))}
-        {gameData.platforms.map((platform) => (
-          <Badge key={platform.platform.id}>{platform.platform.name}</Badge>
-        ))}
-        <p>{gameData.playtime}</p>
-        {gameData.publishers.map((publisher) => (
-          <p key={publisher.id}>{publisher.name}</p>
-        ))}
-        <p>{gameData.rating}</p>
-        {gameData.ratings.map((rating) => (
-          <p key={rating.id}>
-            {rating.title} ({rating.percent})
-          </p>
-        ))}
-        {gameData.tags.map((tag) => (
-          <Badge key={tag.id}>{tag.name}</Badge>
-        ))}
-        <p>{gameData.released ? gameData.released : "Not released yet"}</p>
+
+        <div className="space-y-4">
+          <div dangerouslySetInnerHTML={{ __html: details.description }} />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {details.genres.map((genre) => (
+            <Badge key={genre.id}>{genre.name}</Badge>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {details.platforms.map((platform) => (
+            <Badge key={platform.platform.id}>{platform.platform.name}</Badge>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-xl font-semibold">Developers</h2>
+            <p>{details.developers.map((d) => d.name).join(", ")}</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold">Publishers</h2>
+            <p>{details.publishers.map((p) => p.name).join(", ")}</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold">Release Date</h2>
+            <p>{details.released || "Not released yet"}</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold">Rating</h2>
+            <p>{details.rating}/5</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Available on</h2>
+            <div className="flex flex-wrap gap-2">
+              {gameData.stores?.map((store) => (
+                <StoreLink key={store.id} url={store.url} />
+              ))}
+            </div>
+          </div>
+        </div>
+        {gameData.screenshots.length > 0 && (
+          <div>
+            <h2 className="text-xl font-semibold">Screenshots</h2>
+            <ScreenshotsCarousel screenshots={gameData.screenshots} />
+          </div>
+        )}
+        {gameData.trailers.length > 0 && (
+          <div>
+            <h2 className="text-xl font-semibold">Trailers</h2>
+            {gameData.trailers.map((trailer) => (
+              <div key={trailer.id}>
+                <h3>{trailer.name}</h3>
+                <iframe
+                  src={`https://www.youtube.com/embed/${trailer.key}`}
+                  title={trailer.name}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };

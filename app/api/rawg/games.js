@@ -14,6 +14,18 @@ export const rawgApi = {
     }
   },
 
+  // Search games
+  searchGames: async (query) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/games?key=${API_KEY}&search=${query}&page_size=20`
+      );
+      return await response.json();
+    } catch (error) {
+      throw new Error("Failed to search games");
+    }
+  },
+
   // Fetch game details
   getGameDetails: async (id) => {
     try {
@@ -24,15 +36,39 @@ export const rawgApi = {
     }
   },
 
-  // Search games
-  searchGames: async (query) => {
+  // Get game screenshots
+  getGameScreenshots: async (id) => {
     try {
       const response = await fetch(
-        `${BASE_URL}/games?key=${API_KEY}&search=${query}&page_size=20`
+        `${BASE_URL}/games/${id}/screenshots?key=${API_KEY}`
       );
       return await response.json();
     } catch (error) {
-      throw new Error("Failed to search games");
+      throw new Error("Failed to fetch game screenshots");
+    }
+  },
+
+  // Get game trailers
+  getGameTrailers: async (id) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/games/${id}/movies?key=${API_KEY}`
+      );
+      return await response.json();
+    } catch (error) {
+      throw new Error("Failed to fetch game trailers");
+    }
+  },
+
+  // Get game stores
+  getGameStores: async (id) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/games/${id}/stores?key=${API_KEY}`
+      );
+      return await response.json();
+    } catch (error) {
+      throw new Error("Failed to fetch game stores");
     }
   },
 };
