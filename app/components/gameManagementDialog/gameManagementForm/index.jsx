@@ -225,6 +225,8 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
                   <SelectItem value="in_progress">In Progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="dropped">Dropped</SelectItem>
+                  <SelectItem value="paused">Paused</SelectItem>
+                  <SelectItem value="next_up">Next to play</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
