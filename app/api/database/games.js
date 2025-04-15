@@ -86,12 +86,6 @@ export const gameService = {
   // Add a game to the library
   addToLibrary: async (userId, gameId, data = {}) => {
     try {
-      await supabase
-        .from("wishlist")
-        .delete()
-        .eq("id_user", userId)
-        .eq("id_game", gameId);
-
       const { data: result, error } = await supabase
         .from("library")
         .insert({
@@ -100,7 +94,7 @@ export const gameService = {
           status: data.status || "not_started",
           platine: data.platine || false,
           commentary: data.commentary || null,
-          platforms: data.platforms ? JSON.parse(data.platforms) : null,
+          platforms: data.platforms || null,
           started_at: data.started_at || null,
           ended_at: data.ended_at || null,
           rating: data.rating || null,
@@ -127,16 +121,7 @@ export const gameService = {
 
       const { data: result, error } = await supabase
         .from("library")
-        .update({
-          status: data.status,
-          platine: data.platine,
-          commentary: data.commentary,
-          platforms: data.platforms ? JSON.parse(data.platforms) : null,
-          started_at: data.started_at,
-          ended_at: data.ended_at,
-          rating: data.rating,
-          times_played: data.times_played,
-        })
+        .update(data)
         .eq("id_user", userId)
         .eq("id_game", gameId)
         .select()
@@ -145,7 +130,8 @@ export const gameService = {
       if (error) throw error;
       return result;
     } catch (error) {
-      throw error;
+      console.error("Error updating library:", error);
+      throw new Error("Unable to update library");
     }
   },
 

@@ -179,9 +179,6 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
       const dataToSave = {
         ...values,
         id_game: game.id,
-        platforms: values.platforms
-          ? JSON.stringify(values.platforms.split(","))
-          : null,
       };
 
       const result = await gameService.updateLibrary(
