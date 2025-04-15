@@ -10,12 +10,22 @@ import { ActionsButtons } from "./actionsButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { GameManagementDialog } from "@/components/gameManagementDialog";
 
-export const GameCard = ({ game }) => {
+export const GameCard = ({ game, onUpdate }) => {
   const { user, isAuthenticated } = useAuth();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleDialogOpenChange = (open) => {
+    setIsDialogOpen(open);
+    if (!open && onUpdate) {
+      onUpdate();
+    }
+  };
 
   return (
-    <Card key={game.id}>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{game.name}</CardTitle>
         <CardDescription>
@@ -43,6 +53,15 @@ export const GameCard = ({ game }) => {
           {isAuthenticated && <ActionsButtons game={game} user={user} />}
         </div>
       </CardContent>
+      {isAuthenticated && (
+        <GameManagementDialog
+          game={game}
+          user={user}
+          open={isDialogOpen}
+          onOpenChange={handleDialogOpenChange}
+          onUpdate={onUpdate}
+        />
+      )}
     </Card>
   );
 };

@@ -7,16 +7,21 @@ import {
 } from "@/components/ui/tooltip";
 import { gameService } from "@/api/database/games";
 import { useState, useEffect } from "react";
+import { GameManagementDialog } from "@/components/gameManagementDialog";
 
 export const ActionsButtons = ({ game, user }) => {
   const [library, setLibrary] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const libraryData = await gameService.getLibrary(user.id);
-        setLibrary(libraryData);
+        const libraryData = await gameService.checkGameInLibrary(
+          user.id,
+          game.id
+        );
+        setLibrary(libraryData ? [libraryData] : []);
       } catch (error) {
         console.error("Error fetching library:", error);
       }
@@ -27,19 +32,18 @@ export const ActionsButtons = ({ game, user }) => {
         const wishlistData = await gameService.getWishlist(user.id);
         setWishlist(wishlistData);
       } catch (error) {
-        console.error("Error fetching library:", error);
+        console.error("Error fetching wishlist:", error);
       }
     };
 
     fetchLibrary();
     fetchWishlist();
-  }, [user]);
+  }, [user, game.id]);
 
   const handleAddToWishlist = async () => {
     try {
       await gameService.addToWishlist(user.id, game.id);
       setWishlist([...wishlist, { id_game: game.id }]);
-      console.log("Game added to wishlist!");
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
@@ -49,7 +53,6 @@ export const ActionsButtons = ({ game, user }) => {
     try {
       await gameService.removeFromWishlist(user.id, game.id);
       setWishlist(wishlist.filter((item) => item.id_game !== game.id));
-      console.log("Game removed from wishlist!");
     } catch (error) {
       console.error("Error removing from wishlist:", error);
     }
@@ -59,9 +62,7 @@ export const ActionsButtons = ({ game, user }) => {
     try {
       await gameService.addToLibrary(user.id, game.id);
       setLibrary([...library, { id_game: game.id }]);
-      console.log("Game added to library!");
       handleRemoveFromWishlist();
-      console.log("Game removed from wishlist!");
     } catch (error) {
       console.error("Error adding to library:", error);
     }
@@ -71,11 +72,13 @@ export const ActionsButtons = ({ game, user }) => {
     try {
       await gameService.removeFromLibrary(user.id, game.id);
       setLibrary(library.filter((item) => item.id_game !== game.id));
-      console.log("Game removed from library!");
     } catch (error) {
       console.error("Error removing from library:", error);
     }
   };
+
+  const isInWishlist = wishlist.some((item) => item.id_game === game.id);
+  const isInLibrary = library.some((item) => item.id_game === game.id);
 
   return (
     <TooltipProvider>
@@ -137,15 +140,22 @@ export const ActionsButtons = ({ game, user }) => {
               <CirclePlus
                 className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
                 strokeWidth={1.5}
-                onClick={() => {
-                  console.log("Add to...", game.name);
-                }}
+                onClick={() => setIsDialogOpen(true)}
               />
             </TooltipTrigger>
             <TooltipContent>More actions...</TooltipContent>
           </Tooltip>
         </div>
       </div>
+      <GameManagementDialog
+        game={game}
+        user={user}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        category={
+          isInWishlist ? "wishlist" : isInLibrary ? "library" : "wishlist"
+        }
+      />
     </TooltipProvider>
   );
 };

@@ -9,35 +9,33 @@ export const gameService = {
         .select("*")
         .eq("id_user", userId);
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw new Error(`Failed to fetch wishlist: ${error.message}`);
-      }
+      if (error) throw error;
       return data;
     } catch (error) {
-      console.error("Error in getWishlist:", error);
-      throw error;
+      throw new Error("Failed to fetch wishlist");
     }
   },
-  // Add a game to the wishlist
-  addToWishlist: async (userId, gameId) => {
-    try {
-      const { data, error } = await supabase.from("wishlist").insert({
-        id_user: userId,
-        id_game: gameId,
-        wished_at: new Date(),
-      });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw new Error(`Failed to add game to wishlist: ${error.message}`);
-      }
-      return data;
+  // Add a game to the wishlist
+  addToWishlist: async (userId, gameId, data = {}) => {
+    try {
+      const { data: result, error } = await supabase
+        .from("wishlist")
+        .insert({
+          id_user: userId,
+          id_game: gameId,
+          wished_at: new Date(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return result;
     } catch (error) {
-      console.error("Error in addToWishlist:", error);
       throw error;
     }
   },
+
   // Remove a game from the wishlist
   removeFromWishlist: async (userId, gameId) => {
     try {
@@ -55,7 +53,7 @@ export const gameService = {
   },
 
   // Fetch the library of a user
-  getLibrary: async (userId) => {
+  getLibrary: async (userId, gameId) => {
     try {
       const { data, error } = await supabase
         .from("library")
@@ -65,27 +63,49 @@ export const gameService = {
       if (error) throw error;
       return data;
     } catch (error) {
-      throw new Error("Failed to fetch library");
+      throw error;
+    }
+  },
+
+  // Check if a game exists in the library and return its data
+  checkGameInLibrary: async (userId, gameId) => {
+    try {
+      const { data, error } = await supabase
+        .from("library")
+        .select("*")
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
+
+      if (error) return null;
+      return data?.[0] || null;
+    } catch (error) {
+      return null;
     }
   },
 
   // Add a game to the library
   addToLibrary: async (userId, gameId, data = {}) => {
     try {
+      await supabase
+        .from("wishlist")
+        .delete()
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
+
       const { data: result, error } = await supabase
         .from("library")
         .insert({
           id_user: userId,
           id_game: gameId,
-          status: data.status || "not_started", // not_started, in_progress, completed, abandoned, paused,
+          status: data.status || "not_started",
+          platine: data.platine || false,
+          commentary: data.commentary || null,
+          platforms: data.platforms ? JSON.parse(data.platforms) : null,
           started_at: data.started_at || null,
           ended_at: data.ended_at || null,
           rating: data.rating || null,
           times_played: data.times_played || 0,
-          platine: data.platine || false,
-          commentary: data.commentary || null,
-          platforms: data.platforms || null,
-          added_at: data.added_at || new Date(),
+          added_at: new Date(),
         })
         .select()
         .single();
@@ -93,22 +113,38 @@ export const gameService = {
       if (error) throw error;
       return result;
     } catch (error) {
-      throw new Error("Failed to add game to library");
+      throw error;
     }
   },
 
   // Update a game in the library
   updateLibrary: async (userId, gameId, data) => {
     try {
-      const { data, error } = await supabase
+      const exists = await gameService.checkGameInLibrary(userId, gameId);
+      if (!exists) {
+        return await gameService.addToLibrary(userId, gameId, data);
+      }
+
+      const { data: result, error } = await supabase
         .from("library")
-        .update(data)
+        .update({
+          status: data.status,
+          platine: data.platine,
+          commentary: data.commentary,
+          platforms: data.platforms ? JSON.parse(data.platforms) : null,
+          started_at: data.started_at,
+          ended_at: data.ended_at,
+          rating: data.rating,
+          times_played: data.times_played,
+        })
         .eq("id_user", userId)
-        .eq("id_game", gameId);
+        .eq("id_game", gameId)
+        .select()
+        .single();
+
       if (error) throw error;
-      return data;
+      return result;
     } catch (error) {
-      console.error("Error in updateLibrary:", error);
       throw error;
     }
   },
