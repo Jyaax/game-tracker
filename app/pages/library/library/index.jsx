@@ -4,7 +4,7 @@ import { gameService } from "@/api/database/games";
 import { rawgApi } from "@/api/rawg/games";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { DataTable } from "./table";
+import { DataTable } from "../table";
 import { columns } from "./columns";
 
 export const Library = () => {
@@ -68,8 +68,8 @@ export const Library = () => {
   const statusGroups = {
     "In progress": games.filter((game) => game.status === "in_progress"),
     "Next up": games.filter((game) => game.status === "next_up"),
-    "Not started": games.filter((game) => game.status === "not_started"),
     Completed: games.filter((game) => game.status === "completed"),
+    "Not started": games.filter((game) => game.status === "not_started"),
     Paused: games.filter((game) => game.status === "paused"),
     Dropped: games.filter((game) => game.status === "dropped"),
     "Casual play": games.filter((game) => game.status === "casual_play"),

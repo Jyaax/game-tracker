@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, CirclePlus, Trash } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Info, Trash, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { DeleteDialog } from "./deleteDialog";
 import { GameManagementDialog } from "@/components/gameManagementDialog";
@@ -29,7 +28,7 @@ export const columns = [
         />
       );
     },
-    size: "8%",
+    size: "10%",
   }),
   columnHelper.accessor("name", {
     header: ({ column }) => (
@@ -46,46 +45,7 @@ export const columns = [
         {row.getValue("name")}
       </Link>
     ),
-    size: "42%",
-  }),
-  columnHelper.accessor("rating", {
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Rating
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.getValue("rating") || "-",
-    size: "12%",
-  }),
-  columnHelper.accessor("times_played", {
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Times played
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.getValue("times_played") || "-",
-    size: "12%",
-  }),
-  columnHelper.accessor("platine", {
-    header: "Platine",
-    cell: ({ row }) => {
-      const isPlatine = row.getValue("platine");
-      return isPlatine ? (
-        <Sparkles
-          className="h-4 w-4 fill-yellow-400 stroke-yellow-400"
-          strokeWidth={1.5}
-        />
-      ) : null;
-    },
-    size: "8%",
+    size: "80%",
   }),
   columnHelper.accessor("actions", {
     header: "Actions",
@@ -104,7 +64,7 @@ export const columns = [
       };
 
       return (
-        <div className="flex items-center justify-center space-x-2">
+        <div className="w-full flex items-center justify-end space-x-2">
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -113,11 +73,11 @@ export const columns = [
                   size="icon"
                   onClick={() => setOpenGameDialog(true)}
                 >
-                  <Info className="h-4 w-4" />
+                  <CirclePlus className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit game</p>
+                <p>Add to library</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -143,7 +103,7 @@ export const columns = [
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Remove from library</p>
+                <p>Remove from wishlist</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -156,6 +116,6 @@ export const columns = [
         </div>
       );
     },
-    size: "18%",
+    size: "10%",
   }),
 ];
