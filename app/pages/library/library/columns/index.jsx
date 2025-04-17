@@ -22,6 +22,7 @@ export const columns = [
         />
       );
     },
+    size: "8%",
   }),
   columnHelper.accessor("name", {
     header: ({ column }) => (
@@ -34,6 +35,7 @@ export const columns = [
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    size: "42%",
   }),
   columnHelper.accessor("rating", {
     header: ({ column }) => (
@@ -46,6 +48,7 @@ export const columns = [
       </Button>
     ),
     cell: ({ row }) => row.getValue("rating") || "-",
+    size: "12%",
   }),
   columnHelper.accessor("times_played", {
     header: ({ column }) => (
@@ -57,7 +60,8 @@ export const columns = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => row.getValue("rating") || "-",
+    cell: ({ row }) => row.getValue("times_played") || "-",
+    size: "12%",
   }),
   columnHelper.accessor("platine", {
     header: "Platine",
@@ -70,6 +74,7 @@ export const columns = [
         />
       ) : null;
     },
+    size: "8%",
   }),
   columnHelper.accessor("actions", {
     header: "Actions",
@@ -88,7 +93,7 @@ export const columns = [
       };
 
       return (
-        <div className="flex space-x-2">
+        <div className="flex items-center justify-center space-x-2">
           <Button
             variant="ghost"
             size="icon"
@@ -122,5 +127,6 @@ export const columns = [
         </div>
       );
     },
+    size: "18%",
   }),
 ];

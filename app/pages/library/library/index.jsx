@@ -72,6 +72,7 @@ export const Library = () => {
     Completed: games.filter((game) => game.status === "completed"),
     Paused: games.filter((game) => game.status === "paused"),
     Dropped: games.filter((game) => game.status === "dropped"),
+    "Casual play": games.filter((game) => game.status === "casual_play"),
   };
 
   const filteredGames = games.filter((game) =>

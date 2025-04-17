@@ -48,6 +48,7 @@ const formSchema = z.object({
     "completed",
     "dropped",
     "paused",
+    "casual_play",
     "next_up",
   ]),
   platine: z.boolean().default(false),
@@ -231,6 +232,7 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="dropped">Dropped</SelectItem>
                   <SelectItem value="paused">Paused</SelectItem>
+                  <SelectItem value="casual_play">Casual Play</SelectItem>
                   <SelectItem value="next_up">Next to play</SelectItem>
                 </SelectContent>
               </Select>
@@ -372,8 +374,11 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
                   type="number"
                   min={0}
                   {...field}
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  value={field.value ?? 0}
+                  onChange={(e) => {
+                    const value = e.target.value ? parseInt(e.target.value) : 0;
+                    field.onChange(value);
+                  }}
                 />
               </FormControl>
               <FormMessage />
