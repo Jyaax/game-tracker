@@ -4,7 +4,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Info, Trash, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { DeleteDialog } from "./deleteDialog";
-import { GameManagementDialog } from "@/components/GameManagementDialog";
+import { GameManagementDialog } from "@/components/gameManagementDialog";
 import { useAuth } from "@/contexts/AuthContext";
 
 const columnHelper = createColumnHelper();
