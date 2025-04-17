@@ -71,4 +71,17 @@ export const rawgApi = {
       throw new Error("Failed to fetch game stores");
     }
   },
+
+  // Get games from the same series
+  getGameSeries: async (id) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/games/${id}/game-series?key=${API_KEY}`
+      );
+      console.log(response);
+      return await response.json();
+    } catch (error) {
+      throw new Error("Failed to fetch game series");
+    }
+  },
 };

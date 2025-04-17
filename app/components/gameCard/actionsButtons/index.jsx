@@ -1,4 +1,4 @@
-import { CirclePlus, LibraryBig, Heart, BookX } from "lucide-react";
+import { CirclePlus, BookOpen, Bookmark, BookX } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -89,11 +89,11 @@ export const ActionsButtons = ({ game, user }) => {
               (wishlist.some((item) => item.id_game === game.id) ? (
                 <Tooltip delayDuration={200}>
                   <TooltipTrigger asChild>
-                    <Heart
+                    <Bookmark
                       className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
-                      fill="#ff0000"
+                      fill="#ffffff"
                       strokeWidth={1.5}
-                      stroke="#ff0000"
+                      stroke="#ffffff"
                       onClick={handleRemoveFromWishlist}
                     />
                   </TooltipTrigger>
@@ -102,7 +102,7 @@ export const ActionsButtons = ({ game, user }) => {
               ) : (
                 <Tooltip delayDuration={200}>
                   <TooltipTrigger asChild>
-                    <Heart
+                    <Bookmark
                       className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
                       strokeWidth={1.5}
                       onClick={handleAddToWishlist}
@@ -125,7 +125,7 @@ export const ActionsButtons = ({ game, user }) => {
             ) : (
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <LibraryBig
+                  <BookOpen
                     className="h-5 w-5 cursor-pointer transition-transform hover:scale-110 active:scale-95"
                     strokeWidth={1.5}
                     onClick={handleAddToLibrary}
@@ -143,7 +143,7 @@ export const ActionsButtons = ({ game, user }) => {
                 onClick={() => setIsDialogOpen(true)}
               />
             </TooltipTrigger>
-            <TooltipContent>More actions...</TooltipContent>
+            <TooltipContent>Manage game</TooltipContent>
           </Tooltip>
         </div>
       </div>

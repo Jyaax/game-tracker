@@ -79,6 +79,24 @@ export const gameService = {
       if (error) return null;
       return data?.[0] || null;
     } catch (error) {
+      console.error("Error checking game in library:", error);
+      return null;
+    }
+  },
+
+  // Check if a game exists in the wishlist
+  checkGameInWishlist: async (userId, gameId) => {
+    try {
+      const { data, error } = await supabase
+        .from("wishlist")
+        .select("*")
+        .eq("id_user", userId)
+        .eq("id_game", gameId);
+
+      if (error) return null;
+      return data?.[0] || null;
+    } catch (error) {
+      console.error("Error checking game in wishlist:", error);
       return null;
     }
   },
