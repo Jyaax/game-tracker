@@ -42,7 +42,14 @@ import { Check, ChevronsUpDown } from "lucide-react";
 const formSchema = z.object({
   id_user: z.string().uuid(),
   id_game: z.number(),
-  status: z.enum(["not_started", "in_progress", "completed", "dropped"]),
+  status: z.enum([
+    "not_started",
+    "in_progress",
+    "completed",
+    "dropped",
+    "paused",
+    "next_up",
+  ]),
   platine: z.boolean().default(false),
   commentary: z.string().nullable().default(null),
   platforms: z.string().nullable().default(null),
@@ -126,12 +133,10 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
           console.error("Invalid game data:", { game });
           return;
         }
-
         const existingGame = await gameService.checkGameInLibrary(
           user.id,
           game.id
         );
-
         if (existingGame) {
           const startedAt = existingGame.started_at
             ? new Date(existingGame.started_at)

@@ -29,12 +29,6 @@ export const GamePage = () => {
           stores: stores?.results,
           screenshots: screenshots?.results,
         });
-        console.log("Game Data Structure:", {
-          details,
-          trailers: trailers?.results,
-          stores: stores?.results,
-          screenshots: screenshots?.results,
-        });
       } catch (error) {
         console.error("Error fetching games:", error);
       } finally {
