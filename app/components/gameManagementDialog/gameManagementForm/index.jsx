@@ -207,203 +207,224 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {form.formState.errors.root && (
-          <div className="text-sm text-red-500 bg-red-50 p-2 rounded-md">
-            {form.formState.errors.root.message}
-          </div>
-        )}
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="not_started">Not Started</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="dropped">Dropped</SelectItem>
-                  <SelectItem value="paused">Paused</SelectItem>
-                  <SelectItem value="casual_play">Casual Play</SelectItem>
-                  <SelectItem value="next_up">Next to play</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+    <div className="flex flex-col gap-6">
+      <div className="w-full">
+        <img
+          src={game.background_image}
+          alt={game.name}
+          className="w-full h-48 object-cover object-top rounded-md"
         />
-
-        <FormField
-          control={form.control}
-          name="platine"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Platine</FormLabel>
-              </div>
-            </FormItem>
+      </div>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full flex flex-col gap-6"
+        >
+          {form.formState.errors.root && (
+            <div className="text-sm text-red-500 bg-red-50 p-2 rounded-md">
+              {form.formState.errors.root.message}
+            </div>
           )}
-        />
-
-        <FormField
-          control={form.control}
-          name="platforms"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Platforms</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? field.value
-                            .split(",")
-                            .map((platform) => platform.trim())
-                            .join(", ")
-                        : "Select platforms"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command>
-                    <CommandInput placeholder="Search platform..." />
-                    <CommandEmpty>No platform found.</CommandEmpty>
-                    <CommandGroup>
-                      {platforms.map((platform) => (
-                        <CommandItem
-                          key={platform}
-                          onSelect={() => {
-                            const currentValue = field.value
-                              ? field.value.split(",")
-                              : [];
-                            const newValue = currentValue.includes(platform)
-                              ? currentValue.filter((p) => p !== platform)
-                              : [...currentValue, platform];
-                            field.onChange(newValue.join(","));
-                          }}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="not_started">Not Started</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="dropped">Dropped</SelectItem>
+                      <SelectItem value="paused">Paused</SelectItem>
+                      <SelectItem value="casual_play">Casual Play</SelectItem>
+                      <SelectItem value="next_up">Next to play</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="platforms"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Platforms</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between h-10",
+                            !field.value && "text-muted-foreground"
+                          )}
                         >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              field.value?.includes(platform)
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {platform}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                          {field.value
+                            ? field.value
+                                .split(",")
+                                .map((platform) => platform.trim())
+                                .join(", ")
+                            : "Select platforms"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search platform..." />
+                        <CommandEmpty>No platform found.</CommandEmpty>
+                        <CommandGroup>
+                          {platforms.map((platform) => (
+                            <CommandItem
+                              key={platform}
+                              onSelect={() => {
+                                const currentValue = field.value
+                                  ? field.value.split(",")
+                                  : [];
+                                const newValue = currentValue.includes(platform)
+                                  ? currentValue.filter((p) => p !== platform)
+                                  : [...currentValue, platform];
+                                field.onChange(newValue.join(","));
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  field.value?.includes(platform)
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {platform}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="platine"
+              render={({ field }) => (
+                <FormItem className="flex flex-col justify-center h-[100px]">
+                  <div className="flex items-center space-x-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="cursor-pointer mb-0">
+                      Platine
+                    </FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="started_at"
-          render={({ field }) => (
-            <DatePicker field={field} label="Started at" />
-          )}
-        />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="started_at"
+              render={({ field }) => (
+                <DatePicker field={field} label="Started at" />
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="ended_at"
-          render={({ field }) => <DatePicker field={field} label="Ended at" />}
-        />
+            <FormField
+              control={form.control}
+              name="ended_at"
+              render={({ field }) => (
+                <DatePicker field={field} label="Ended at" />
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rating (0-10)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={0}
-                  max={10}
-                  {...field}
-                  value={field.value ?? ""}
-                  onChange={(e) =>
-                    field.onChange(
-                      e.target.value ? parseInt(e.target.value) : undefined
-                    )
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rating (0-10)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={10}
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? parseInt(e.target.value) : undefined
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="times_played"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Times Played</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      value={field.value ?? 0}
+                      onChange={(e) => {
+                        const value = e.target.value
+                          ? parseInt(e.target.value)
+                          : 0;
+                        field.onChange(value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="times_played"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Times Played</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={0}
-                  {...field}
-                  value={field.value ?? 0}
-                  onChange={(e) => {
-                    const value = e.target.value ? parseInt(e.target.value) : 0;
-                    field.onChange(value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="commentary"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Commentary</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="commentary"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Commentary</FormLabel>
-              <FormControl>
-                <Input {...field} value={field.value ?? ""} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full">
-          Apply
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" className="w-80 self-end">
+            Apply
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };

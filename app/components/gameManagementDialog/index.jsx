@@ -34,7 +34,7 @@ export const GameManagementDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="md:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>Manage Game</DialogTitle>
           <DialogDescription>
