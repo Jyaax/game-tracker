@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect, useRef } from "react";
 
 const formSchema = z.object({
-  searchQuery: z.string().min(2, {
-    message: "Game must be at least 2 characters.",
-  }),
+  searchQuery: z.string().min(1, "Search query is required"),
 });
 
 export const SearchForm = ({ onSubmit, loading, initialSearch = "" }) => {
@@ -24,27 +23,35 @@ export const SearchForm = ({ onSubmit, loading, initialSearch = "" }) => {
       searchQuery: initialSearch,
     },
   });
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
         <FormField
           control={form.control}
           name="searchQuery"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Search for a game</FormLabel>
-              <div className="flex gap-2">
-                <FormControl>
-                  <Input placeholder="Search for a game..." {...field} />
-                </FormControl>
-                <Button type="submit" disabled={loading} className="self-end">
-                  {loading ? "Searching..." : "Search"}
-                </Button>
-              </div>
+            <FormItem className="flex-1">
+              <FormControl>
+                <Input
+                  placeholder="Search for a game..."
+                  {...field}
+                  ref={inputRef}
+                />
+              </FormControl>
             </FormItem>
           )}
         />
+        <Button type="submit" disabled={loading} className="self-end">
+          {loading ? "Searching..." : "Search"}
+        </Button>
       </form>
     </Form>
   );

@@ -20,3 +20,16 @@ le style en général des détails, wl et library, style de toutes les pages
 truc +18 dans les settings
 
 Plsueiurs tailles de cards
+
+bud de la taille medium dans browse
+focus de barre de recherche
+
+Si mooins de 3 images/jeux partenaires, pas d efleches
+
+logo editau lieu de infos
+
+cacher des jeux de 'onglet communaitaire --> eye sur lucid
+
+harmoniser les yeux là
+
+Recherche dans lib, ne aps afficher les catégories inutilisées

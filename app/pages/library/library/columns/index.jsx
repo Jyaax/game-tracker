@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Info, Trash, Sparkles } from "lucide-react";
+import { SquarePen, Trash, Sparkles, Eye } from "lucide-react";
 import { useState } from "react";
 import { DeleteDialog } from "./deleteDialog";
 import { GameManagementDialog } from "@/components/gameManagementDialog";
@@ -22,11 +22,29 @@ export const columns = [
     cell: ({ row }) => {
       const image = row.getValue("background_image");
       return (
-        <img
-          src={image}
-          alt={row.getValue("name")}
-          className="h-10 w-10 rounded-md object-cover"
-        />
+        <div className="flex items-center justify-center space-x-2">
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setOpenDeleteDialog(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Hide game</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <img
+            src={image}
+            alt={row.getValue("name")}
+            className="h-10 w-10 rounded-md object-cover"
+          />
+        </div>
       );
     },
     size: "8%",
@@ -113,7 +131,7 @@ export const columns = [
                   size="icon"
                   onClick={() => setOpenGameDialog(true)}
                 >
-                  <Info className="h-4 w-4" />
+                  <SquarePen className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -147,6 +165,7 @@ export const columns = [
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           <DeleteDialog
             open={openDeleteDialog}
             onOpenChange={setOpenDeleteDialog}

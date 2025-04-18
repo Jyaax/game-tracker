@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Eye } from "lucide-react";
 
 const columnHelper = createColumnHelper();
 
@@ -21,11 +22,29 @@ export const columns = [
     cell: ({ row }) => {
       const image = row.getValue("background_image");
       return (
-        <img
-          src={image}
-          alt={row.getValue("name")}
-          className="h-10 w-10 rounded-md object-cover"
-        />
+        <div className="flex items-center justify-center space-x-2">
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setOpenDeleteDialog(true)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Hide game</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <img
+            src={image}
+            alt={row.getValue("name")}
+            className="h-10 w-10 rounded-md object-cover"
+          />
+        </div>
       );
     },
     size: "10%",
