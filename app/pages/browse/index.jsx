@@ -11,7 +11,7 @@ export const BrowsePage = () => {
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
-  const [cardSize, setCardSize] = useState("medium");
+  const [cardSize, setCardSize] = useState("large");
 
   const onSubmit = async (data) => {
     setLoading(true);
