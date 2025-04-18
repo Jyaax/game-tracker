@@ -12,9 +12,17 @@ export const Wishlist = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState([{ id: "name", desc: false }]);
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRowUpdate = (gameId) => {
+    setGames((prevGames) =>
+      prevGames.map((game) =>
+        game.id === gameId ? { ...game, hidden: !game.hidden } : game
+      )
+    );
+  };
 
   const fetchWishlist = async () => {
     if (!user) return;
@@ -71,7 +79,7 @@ export const Wishlist = () => {
           data={filteredGames}
           sorting={sorting}
           setSorting={setSorting}
-          onRefresh={() => setRefreshKey((prev) => prev + 1)}
+          onRefresh={handleRowUpdate}
         />
       </CardContent>
     </Card>

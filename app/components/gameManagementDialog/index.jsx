@@ -28,7 +28,6 @@ export const GameManagementDialog = ({
   };
 
   const handleClose = (shouldClose) => {
-    console.log("handleClose called with:", shouldClose);
     onOpenChange(false);
   };
 

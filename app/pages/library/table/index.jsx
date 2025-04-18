@@ -26,8 +26,15 @@ export function DataTable({ columns, data, sorting, setSorting, onRefresh }) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 50,
+      },
+    },
     meta: {
-      onRefresh,
+      onRefresh: (gameId) => {
+        if (onRefresh) onRefresh(gameId);
+      },
     },
   });
 
@@ -40,16 +47,8 @@ export function DataTable({ columns, data, sorting, setSorting, onRefresh }) {
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
+                  className="whitespace-nowrap px-2"
                   style={{ width: header.column.columnDef.size }}
-                  className={cn(
-                    "whitespace-nowrap px-4",
-                    header.id === "background_image" && "w-[8%]",
-                    header.id === "name" && "w-[42%]",
-                    header.id === "rating" && "w-[12%] text-center",
-                    header.id === "times_played" && "w-[12%] text-center",
-                    header.id === "platine" && "w-[8%] text-center",
-                    header.id === "actions" && "w-[18%] text-center"
-                  )}
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -67,23 +66,16 @@ export function DataTable({ columns, data, sorting, setSorting, onRefresh }) {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className={cn(
-                      "whitespace-nowrap px-4",
-                      cell.column.id === "background_image" && "w-[8%]",
-                      cell.column.id === "name" && "w-[42%] text-left",
-                      cell.column.id === "rating" && "w-[12%] text-center",
-                      cell.column.id === "times_played" &&
-                        "w-[12%] text-center",
-                      cell.column.id === "platine" && "w-[8%] text-center",
-                      cell.column.id === "actions" && "w-[18%] text-center"
-                    )}
+                    className="whitespace-nowrap px-2"
+                    style={{ width: cell.column.columnDef.size }}
                   >
                     <div
                       className={cn(
                         "flex items-center",
-                        cell.column.id === "name"
+                        cell.column.id === "name" ||
+                          cell.column.id === "background_image"
                           ? "justify-start"
-                          : "justify-center"
+                          : "justify-end"
                       )}
                     >
                       {flexRender(

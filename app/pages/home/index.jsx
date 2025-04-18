@@ -18,7 +18,6 @@ export const HomePage = () => {
   const fetchMoreGames = async () => {
     try {
       const data = await rawgApi.getPopularGames(page + 1);
-      console.log(data);
       setGames((prevGames) => [...prevGames, ...data.results]);
       setPage((prevPage) => prevPage + 1);
       setHasMore(data.results.length > 0);

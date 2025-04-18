@@ -45,8 +45,6 @@ export const AuthProvider = ({ children }) => {
       if (!data?.user) {
         throw new Error("No user data returned from signUp");
       }
-
-      console.log("Auth user created:", data.user);
       return { data, error };
     },
     logout: () => supabase.auth.signOut(),

@@ -78,7 +78,6 @@ export const rawgApi = {
       const response = await fetch(
         `${BASE_URL}/games/${id}/game-series?key=${API_KEY}`
       );
-      console.log(response);
       return await response.json();
     } catch (error) {
       throw new Error("Failed to fetch game series");

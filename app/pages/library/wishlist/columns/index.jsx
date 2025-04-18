@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, CirclePlus, Trash } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
+import { SquarePen, Trash, Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
 import { DeleteDialog } from "./deleteDialog";
 import { GameManagementDialog } from "@/components/gameManagementDialog";
@@ -12,30 +13,52 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Eye } from "lucide-react";
+import { gameService } from "@/api/database/games";
 
 const columnHelper = createColumnHelper();
 
 export const columns = [
   columnHelper.accessor("background_image", {
     header: "",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const image = row.getValue("background_image");
+      const isHidden = row.original.hidden;
+      const game = row.original;
+      const onRefresh = table.options.meta?.onRefresh;
+      const { user } = useAuth();
+
+      const handleToggleVisibility = async () => {
+        try {
+          await gameService.updateWishlistVisibility(
+            user.id,
+            game.id,
+            !isHidden
+          );
+          if (onRefresh) onRefresh(game.id);
+        } catch (error) {
+          console.error("Error toggling game visibility:", error);
+        }
+      };
+
       return (
-        <div className="flex items-center justify-center space-x-2">
+        <div className="flex items-center space-x-3">
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setOpenDeleteDialog(true)}
+                  onClick={handleToggleVisibility}
                 >
-                  <Eye className="h-4 w-4" />
+                  {isHidden ? (
+                    <EyeClosed className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Hide game</p>
+                <p>{isHidden ? "Show game" : "Hide game"}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -47,7 +70,7 @@ export const columns = [
         </div>
       );
     },
-    size: "10%",
+    size: "11%",
   }),
   columnHelper.accessor("name", {
     header: ({ column }) => (
@@ -64,7 +87,7 @@ export const columns = [
         {row.getValue("name")}
       </Link>
     ),
-    size: "80%",
+    size: "79%",
   }),
   columnHelper.accessor("actions", {
     header: "Actions",
@@ -83,7 +106,7 @@ export const columns = [
       };
 
       return (
-        <div className="w-full flex items-center justify-end space-x-2">
+        <div className="flex items-center justify-end space-x-2">
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -92,11 +115,11 @@ export const columns = [
                   size="icon"
                   onClick={() => setOpenGameDialog(true)}
                 >
-                  <CirclePlus className="h-4 w-4" />
+                  <SquarePen className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Add to library</p>
+                <p>Edit game</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -105,7 +128,7 @@ export const columns = [
             onOpenChange={handleGameDialogOpenChange}
             game={game}
             user={user}
-            category="library"
+            category="wishlist"
           />
           <TooltipProvider delayDuration={200}>
             <Tooltip>
@@ -126,6 +149,7 @@ export const columns = [
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           <DeleteDialog
             open={openDeleteDialog}
             onOpenChange={setOpenDeleteDialog}
@@ -135,6 +159,6 @@ export const columns = [
         </div>
       );
     },
-    size: "10%",
+    size: "12%",
   }),
 ];

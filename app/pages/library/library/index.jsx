@@ -12,9 +12,17 @@ export const Library = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState([{ id: "name", desc: false }]);
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRowUpdate = (gameId) => {
+    setGames((prevGames) =>
+      prevGames.map((game) =>
+        game.id === gameId ? { ...game, hidden: !game.hidden } : game
+      )
+    );
+  };
 
   const fetchLibrary = async () => {
     if (!user) return;
@@ -47,6 +55,7 @@ export const Library = () => {
             platforms: libraryPlatforms,
             platine: item.platine,
             commentary: item.commentary,
+            hidden: item.hidden,
 
             name: gameDetails.name,
             background_image: gameDetails.background_image,
@@ -107,7 +116,7 @@ export const Library = () => {
                   )}
                   sorting={sorting}
                   setSorting={setSorting}
-                  onRefresh={() => setRefreshKey((prev) => prev + 1)}
+                  onRefresh={handleRowUpdate}
                 />
               </div>
             )

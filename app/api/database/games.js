@@ -168,4 +168,28 @@ export const gameService = {
       throw error;
     }
   },
+
+  updateGameVisibility: async (userId, gameId, hidden) => {
+    const { data, error } = await supabase
+      .from("library")
+      .update({ hidden })
+      .eq("id_user", userId)
+      .eq("id_game", gameId)
+      .select();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updateWishlistVisibility: async (userId, gameId, hidden) => {
+    const { data, error } = await supabase
+      .from("wishlist")
+      .update({ hidden })
+      .eq("id_user", userId)
+      .eq("id_game", gameId)
+      .select();
+
+    if (error) throw error;
+    return data;
+  },
 };
