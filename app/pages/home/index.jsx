@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { rawgApi } from "@/api/rawg/games";
-import { GameCard } from "@/components/gameCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { CardSizeSelector } from "@/components/cardSizeSelector";
+import { GamesSection } from "@/components/gamesSection";
 
 export const HomePage = () => {
   const [games, setGames] = useState([]);
@@ -10,10 +9,16 @@ export const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [cardSize, setCardSize] = useState("medium");
+
+  const handleSizeChange = (size) => {
+    setCardSize(size);
+  };
 
   const fetchMoreGames = async () => {
     try {
       const data = await rawgApi.getPopularGames(page + 1);
+      console.log(data);
       setGames((prevGames) => [...prevGames, ...data.results]);
       setPage((prevPage) => prevPage + 1);
       setHasMore(data.results.length > 0);
@@ -41,8 +46,11 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-8">Welcome to GameTracker</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Welcome to GameTracker</h1>
+        <CardSizeSelector onSizeChange={handleSizeChange} />
+      </div>
 
       {error ? (
         <div className="text-destructive">{error}</div>
@@ -51,30 +59,15 @@ export const HomePage = () => {
           <h2 className="text-2xl font-semibold mb-6">
             All time popular games
           </h2>
-          <InfiniteScroll
-            dataLength={games.length}
-            next={fetchMoreGames}
+          <GamesSection
+            games={games}
             hasMore={hasMore}
-            loader={
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={`skeleton-${index}`} className="space-y-4">
-                    <Skeleton className="h-48 w-full rounded-md" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ))}
-              </div>
-            }
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {games.map((game) => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          </InfiniteScroll>
+            onLoadMore={fetchMoreGames}
+            loading={loading}
+            cardSize={cardSize}
+          />
         </>
       )}
-    </>
+    </div>
   );
 };
