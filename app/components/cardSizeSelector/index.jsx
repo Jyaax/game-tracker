@@ -1,9 +1,9 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, LayoutList, LayoutTemplate } from "lucide-react";
 
-export const CardSizeSelector = ({ onSizeChange }) => {
+export const CardSizeSelector = ({ onSizeChange, defaultSize = "medium" }) => {
   return (
-    <Tabs defaultValue="medium" onValueChange={onSizeChange}>
+    <Tabs defaultValue={defaultSize} onValueChange={onSizeChange}>
       <TabsList>
         <TabsTrigger value="small">
           <LayoutGrid className="h-4 w-4 mr-2" />

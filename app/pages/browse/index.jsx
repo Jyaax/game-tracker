@@ -58,7 +58,10 @@ export const BrowsePage = () => {
                 {error && <div className="text-destructive mt-4">{error}</div>}
               </div>
               <div className="flex justify-end">
-                <CardSizeSelector onSizeChange={setCardSize} />
+                <CardSizeSelector
+                  onSizeChange={setCardSize}
+                  defaultSize={cardSize}
+                />
               </div>
             </div>
             <GamesSection
