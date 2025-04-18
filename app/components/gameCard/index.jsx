@@ -82,11 +82,18 @@ export const GameCard = ({ game, onUpdate, size = "medium" }) => {
         </p>
         <div className="flex justify-between items-center">
           <Link to={`/games/${game.id}`} className="block w-fit">
-            <Button variant="outline" className="mt-4">
-              More info
+            <Button
+              variant="outline"
+              className={`mt-4 ${size === "small" ? "text-xs px-4" : ""}`}
+            >
+              {size === "small" ? "View" : "More info"}
             </Button>
           </Link>
-          {isAuthenticated && <ActionsButtons game={game} user={user} />}
+          {isAuthenticated && (
+            <div className="mt-3 flex items-center">
+              <ActionsButtons game={game} user={user} />
+            </div>
+          )}
         </div>
       </CardContent>
       {isAuthenticated && (
