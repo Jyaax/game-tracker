@@ -1,15 +1,16 @@
-import { Link } from 'react-router-dom';
-import { ThemeToggle } from './ThemeToggle';
-import { Button } from '@/components/ui/button';
-import { CircleUserRound, LogOut } from 'lucide-react';
-import { AuthDialog } from './authDialog';
+import { Link, useNavigate } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
+import { Button } from "@/components/ui/button";
+import { CircleUserRound, LogOut, Search } from "lucide-react";
+import { AuthDialog } from "./authDialog";
+import { Input } from "@/components/ui/input";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu';
+} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,14 +18,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/contexts/AuthContext';
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/browse?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   return (
@@ -59,6 +70,18 @@ export const Navbar = () => {
             </NavigationMenu>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
+            <form onSubmit={handleSearch} className="w-64">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search games..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 h-8 text-sm"
+                />
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
+            </form>
             <ThemeToggle />
             {isAuthenticated ? (
               <DropdownMenu>
@@ -69,7 +92,7 @@ export const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>
-                    {user?.username || 'My Account'}
+                    {user?.username || "My Account"}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
