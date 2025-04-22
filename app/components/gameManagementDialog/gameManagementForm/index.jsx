@@ -136,8 +136,16 @@ export const GameManagementForm = ({
   useEffect(() => {
     const checkExistingGame = async () => {
       try {
-        if (!game || !game.id) {
+        if (!game) {
           console.error("Invalid game data:", { game });
+          return;
+        }
+
+        // Get the actual game object if it's nested
+        const gameData = game.game || game;
+        const gameId = gameData.entry_id ? gameData.id_game : gameData.id;
+        if (!gameId) {
+          console.error("Game ID is missing:", gameData);
           return;
         }
 
@@ -145,10 +153,9 @@ export const GameManagementForm = ({
         if (category === "library") {
           const existingGame = await gameService.checkGameInLibrary(
             user.id,
-            game.id
+            gameId
           );
           if (existingGame) {
-            console.log("Loading existing game data:", existingGame);
             // Format dates correctly
             const startedAt = existingGame.started_at
               ? new Date(existingGame.started_at)
@@ -165,7 +172,7 @@ export const GameManagementForm = ({
 
             const formData = {
               id_user: user.id,
-              id_game: game.id,
+              id_game: gameId,
               status: existingGame.status || "not_started",
               platine: existingGame.platine || false,
               commentary: existingGame.commentary || null,
@@ -176,7 +183,6 @@ export const GameManagementForm = ({
               times_played: existingGame.times_played || 0,
             };
 
-            console.log("Setting form data:", formData);
             form.reset(formData, {
               keepDefaultValues: false,
             });
@@ -185,10 +191,9 @@ export const GameManagementForm = ({
         }
 
         // If we're in wishlist or no existing game found, use default values
-        console.log("Using default values");
         form.reset({
           id_user: user.id,
-          id_game: game.id,
+          id_game: gameId,
           status: "not_started",
           platine: false,
           commentary: null,
@@ -207,7 +212,7 @@ export const GameManagementForm = ({
     };
 
     checkExistingGame();
-  }, [game, game?.id, user.id, form, category]);
+  }, [game, user.id, form, category]);
 
   const onSubmit = async (values) => {
     try {
@@ -220,17 +225,16 @@ export const GameManagementForm = ({
         return `${year}-${month}-${day}`;
       };
 
-      // Use id_game for Supabase operations (it's the RAWG ID)
-      const gameId = game?.id;
+      // Get the actual game object if it's nested
+      const gameData = game.game || game;
+      const gameId = gameData.entry_id ? gameData.id_game : gameData.id;
       if (!gameId) {
-        console.error("Game ID is missing:", game);
+        console.error("Game ID is missing:", gameData);
         form.setError("root", {
           message: "Game ID is missing",
         });
         return;
       }
-
-      console.log("Using game ID for Supabase:", gameId);
 
       const dataToSave = {
         ...values,
@@ -245,30 +249,16 @@ export const GameManagementForm = ({
         times_played: values.times_played || 0,
       };
 
-      console.log("Saving game data:", dataToSave);
-
       // If coming from wishlist, add to library first
       if (category === "wishlist") {
-        console.log("Adding to library:", gameId);
         await gameService.addToLibrary(user.id, gameId, dataToSave);
-        // Then remove from wishlist
-        try {
-          // Get the wishlist entry first to get its ID
-          const wishlistEntry = await gameService.checkGameInWishlist(
-            user.id,
-            gameId
-          );
-          if (wishlistEntry) {
-            console.log("Removing from wishlist:", wishlistEntry.id);
-            await gameService.removeFromWishlist(user.id, wishlistEntry.id);
-          }
-        } catch (error) {
-          console.error("Error removing from wishlist:", error);
+        // Then remove from wishlist using the entry_id directly
+        if (gameData.entry_id) {
+          await gameService.removeFromWishlist(user.id, gameData.entry_id);
         }
       } else {
         // Otherwise update the library
         try {
-          // Since we're in the library category, we know the game exists
           await gameService.updateLibrary(user.id, gameId, dataToSave);
         } catch (error) {
           console.error("Error updating library:", error);

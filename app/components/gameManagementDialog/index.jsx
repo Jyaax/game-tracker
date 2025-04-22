@@ -20,6 +20,9 @@ export const GameManagementDialog = ({
     return null;
   }
 
+  // Get the actual game object if it's nested
+  const gameData = game.game || game;
+
   const handleOpenChange = (newOpen) => {
     if (!newOpen && document.activeElement?.type === "submit") {
       return;
@@ -41,7 +44,7 @@ export const GameManagementDialog = ({
           </DialogDescription>
         </DialogHeader>
         <GameManagementForm
-          game={game}
+          game={gameData}
           user={user}
           category={category}
           onClose={handleClose}

@@ -126,7 +126,22 @@ export const columns = [
           <GameManagementDialog
             open={openGameDialog}
             onOpenChange={handleGameDialogOpenChange}
-            game={game}
+            game={{
+              id: game.entry_id,
+              entry_id: game.entry_id,
+              id_user: game.id_user,
+              id_game: game.id_game,
+              name: game.name,
+              background_image: game.background_image,
+              status: game.status,
+              platine: game.platine,
+              commentary: game.commentary,
+              platforms: game.platforms,
+              started_at: game.started_at,
+              ended_at: game.ended_at,
+              rating: game.rating,
+              times_played: game.times_played,
+            }}
             user={user}
             category="wishlist"
             onUpdate={(gameId) => {
