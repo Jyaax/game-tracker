@@ -95,7 +95,10 @@ export const columns = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => row.getValue("rating") || "-",
+    cell: ({ row }) => {
+      const rating = row.getValue("rating");
+      return rating === null ? "-" : rating;
+    },
     size: "12%",
   }),
   columnHelper.accessor("times_played", {
@@ -164,6 +167,9 @@ export const columns = [
             game={game}
             user={user}
             category="library"
+            onUpdate={(gameId) => {
+              if (onRefresh) onRefresh(gameId);
+            }}
           />
           <TooltipProvider delayDuration={200}>
             <Tooltip>

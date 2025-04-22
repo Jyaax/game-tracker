@@ -20,6 +20,10 @@ export const GamePage = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   const fetchGameData = async () => {
     try {
       const details = await rawgApi.getGameDetails(id);

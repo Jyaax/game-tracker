@@ -109,7 +109,13 @@ const DatePicker = ({ field, label }) => (
   </FormItem>
 );
 
-export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
+export const GameManagementForm = ({
+  game,
+  user,
+  onClose,
+  onUpdate,
+  category,
+}) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -130,45 +136,68 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
   useEffect(() => {
     const checkExistingGame = async () => {
       try {
-        if (!game || typeof game.id === "undefined") {
+        if (!game || !game.id) {
           console.error("Invalid game data:", { game });
           return;
         }
-        const existingGame = await gameService.checkGameInLibrary(
-          user.id,
-          game.id
-        );
-        if (existingGame) {
-          const startedAt = existingGame.started_at
-            ? new Date(existingGame.started_at)
-            : null;
-          const endedAt = existingGame.ended_at
-            ? new Date(existingGame.ended_at)
-            : null;
 
-          const platforms = existingGame.platforms
-            ? typeof existingGame.platforms === "string"
-              ? existingGame.platforms
-              : JSON.stringify(existingGame.platforms)
-            : null;
+        // Only check for existing game if we're in the library category
+        if (category === "library") {
+          const existingGame = await gameService.checkGameInLibrary(
+            user.id,
+            game.id
+          );
+          if (existingGame) {
+            console.log("Loading existing game data:", existingGame);
+            // Format dates correctly
+            const startedAt = existingGame.started_at
+              ? new Date(existingGame.started_at)
+              : null;
+            const endedAt = existingGame.ended_at
+              ? new Date(existingGame.ended_at)
+              : null;
 
-          const formData = {
-            id_user: user.id,
-            id_game: game.id,
-            status: existingGame.status,
-            platine: existingGame.platine,
-            commentary: existingGame.commentary,
-            platforms: platforms,
-            started_at: startedAt,
-            ended_at: endedAt,
-            rating: existingGame.rating,
-            times_played: existingGame.times_played,
-          };
+            const platforms = existingGame.platforms
+              ? typeof existingGame.platforms === "string"
+                ? existingGame.platforms
+                : JSON.stringify(existingGame.platforms)
+              : null;
 
-          form.reset(formData, {
-            keepDefaultValues: false,
-          });
+            const formData = {
+              id_user: user.id,
+              id_game: game.id,
+              status: existingGame.status || "not_started",
+              platine: existingGame.platine || false,
+              commentary: existingGame.commentary || null,
+              platforms: platforms,
+              started_at: startedAt,
+              ended_at: endedAt,
+              rating: existingGame.rating || null,
+              times_played: existingGame.times_played || 0,
+            };
+
+            console.log("Setting form data:", formData);
+            form.reset(formData, {
+              keepDefaultValues: false,
+            });
+            return;
+          }
         }
+
+        // If we're in wishlist or no existing game found, use default values
+        console.log("Using default values");
+        form.reset({
+          id_user: user.id,
+          id_game: game.id,
+          status: "not_started",
+          platine: false,
+          commentary: null,
+          platforms: null,
+          started_at: null,
+          ended_at: null,
+          rating: null,
+          times_played: 0,
+        });
       } catch (error) {
         console.error("Error loading game data:", error);
         form.setError("root", {
@@ -178,23 +207,81 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
     };
 
     checkExistingGame();
-  }, [game, game?.id, user.id]);
+  }, [game, game?.id, user.id, form, category]);
 
   const onSubmit = async (values) => {
     try {
-      const dataToSave = {
-        ...values,
-        id_game: game.id,
+      // Format dates to YYYY-MM-DD
+      const formatDate = (date) => {
+        if (!date) return null;
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
       };
 
-      const result = await gameService.updateLibrary(
-        user.id,
-        game.id,
-        dataToSave
-      );
+      // Use id_game for Supabase operations (it's the RAWG ID)
+      const gameId = game?.id;
+      if (!gameId) {
+        console.error("Game ID is missing:", game);
+        form.setError("root", {
+          message: "Game ID is missing",
+        });
+        return;
+      }
 
+      console.log("Using game ID for Supabase:", gameId);
+
+      const dataToSave = {
+        ...values,
+        id_game: gameId,
+        status: values.status || "not_started",
+        platine: values.platine || false,
+        commentary: values.commentary || null,
+        platforms: values.platforms || null,
+        started_at: formatDate(values.started_at),
+        ended_at: formatDate(values.ended_at),
+        rating: values.rating || null,
+        times_played: values.times_played || 0,
+      };
+
+      console.log("Saving game data:", dataToSave);
+
+      // If coming from wishlist, add to library first
+      if (category === "wishlist") {
+        console.log("Adding to library:", gameId);
+        await gameService.addToLibrary(user.id, gameId, dataToSave);
+        // Then remove from wishlist
+        try {
+          // Get the wishlist entry first to get its ID
+          const wishlistEntry = await gameService.checkGameInWishlist(
+            user.id,
+            gameId
+          );
+          if (wishlistEntry) {
+            console.log("Removing from wishlist:", wishlistEntry.id);
+            await gameService.removeFromWishlist(user.id, wishlistEntry.id);
+          }
+        } catch (error) {
+          console.error("Error removing from wishlist:", error);
+        }
+      } else {
+        // Otherwise update the library
+        try {
+          // Since we're in the library category, we know the game exists
+          await gameService.updateLibrary(user.id, gameId, dataToSave);
+        } catch (error) {
+          console.error("Error updating library:", error);
+          form.setError("root", {
+            message: "Error updating library",
+          });
+          return;
+        }
+      }
+
+      // Force refresh the data
       if (onUpdate) {
-        onUpdate(result);
+        onUpdate(gameId);
       }
 
       onClose(false);
@@ -368,12 +455,14 @@ export const GameManagementForm = ({ game, user, onClose, onUpdate }) => {
                       min={0}
                       max={10}
                       {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? parseInt(e.target.value) : undefined
-                        )
-                      }
+                      value={field.value === null ? "" : field.value}
+                      onChange={(e) => {
+                        const value =
+                          e.target.value === ""
+                            ? null
+                            : parseInt(e.target.value);
+                        field.onChange(value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

@@ -16,12 +16,35 @@ export const Wishlist = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleRowUpdate = (gameId) => {
-    setGames((prevGames) =>
-      prevGames.map((game) =>
-        game.id === gameId ? { ...game, hidden: !game.hidden } : game
-      )
-    );
+  const handleRowUpdate = async (gameId) => {
+    try {
+      const updatedGame = await gameService.checkGameInWishlist(
+        user.id,
+        gameId
+      );
+      if (!updatedGame) {
+        setGames((prevGames) => prevGames.filter((game) => game.id !== gameId));
+        return;
+      }
+
+      const gameDetails = await rawgApi.getGameDetails(updatedGame.id_game);
+      setGames((prevGames) =>
+        prevGames.map((game) =>
+          game.id === gameId
+            ? {
+                ...game,
+                ...updatedGame,
+                id: gameDetails.id,
+                id_game: gameDetails.id,
+                name: gameDetails.name,
+                background_image: gameDetails.background_image,
+              }
+            : game
+        )
+      );
+    } catch (error) {
+      console.error("Error updating game:", error);
+    }
   };
 
   const fetchWishlist = async () => {
@@ -35,10 +58,19 @@ export const Wishlist = () => {
           const gameDetails = await rawgApi.getGameDetails(item.id_game);
           return {
             id: gameDetails.id,
+            entry_id: item.id,
             id_user: item.id_user,
-            id_game: item.id_game,
+            id_game: gameDetails.id,
             name: gameDetails.name,
             background_image: gameDetails.background_image,
+            status: "not_started",
+            platine: false,
+            commentary: null,
+            platforms: null,
+            started_at: null,
+            ended_at: null,
+            rating: null,
+            times_played: 0,
           };
         })
       );

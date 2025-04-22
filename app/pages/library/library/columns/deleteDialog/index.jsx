@@ -16,10 +16,11 @@ export const DeleteDialog = ({ open, onOpenChange, game, onRefresh }) => {
 
   const handleDelete = async () => {
     try {
-      await gameService.removeFromLibrary(user.id, game.id_game);
+      await gameService.removeFromLibrary(user.id, game.entry_id);
+      console.log("Game deleted from library:", game.id);
       onOpenChange(false);
       if (typeof onRefresh === "function") {
-        onRefresh();
+        onRefresh(game.id);
       }
     } catch (error) {
       console.error("Error deleting game:", error);

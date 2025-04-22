@@ -16,10 +16,10 @@ export const DeleteDialog = ({ open, onOpenChange, game, onRefresh }) => {
 
   const handleDelete = async () => {
     try {
-      await gameService.removeFromWishlist(user.id, game.id);
+      await gameService.removeFromWishlist(user.id, game.entry_id);
       onOpenChange(false);
       if (typeof onRefresh === "function") {
-        onRefresh();
+        onRefresh(game.id);
       }
     } catch (error) {
       console.error("Error deleting game from wishlist:", error);

@@ -16,12 +16,32 @@ export const Library = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleRowUpdate = (gameId) => {
-    setGames((prevGames) =>
-      prevGames.map((game) =>
-        game.id === gameId ? { ...game, hidden: !game.hidden } : game
-      )
-    );
+  const handleRowUpdate = async (gameId) => {
+    try {
+      const updatedGame = await gameService.checkGameInLibrary(user.id, gameId);
+      if (!updatedGame) {
+        setGames((prevGames) => prevGames.filter((game) => game.id !== gameId));
+        return;
+      }
+
+      const gameDetails = await rawgApi.getGameDetails(updatedGame.id_game);
+      setGames((prevGames) =>
+        prevGames.map((game) =>
+          game.id === gameId
+            ? {
+                ...game,
+                ...updatedGame,
+                id: gameDetails.id,
+                id_game: gameDetails.id,
+                name: gameDetails.name,
+                background_image: gameDetails.background_image,
+              }
+            : game
+        )
+      );
+    } catch (error) {
+      console.error("Error updating game:", error);
+    }
   };
 
   const fetchLibrary = async () => {
@@ -33,32 +53,21 @@ export const Library = () => {
       const gamesWithDetails = await Promise.all(
         libraryData.map(async (item) => {
           const gameDetails = await rawgApi.getGameDetails(item.id_game);
-
-          let libraryPlatforms = [];
-          if (item.platforms) {
-            if (typeof item.platforms === "string") {
-              libraryPlatforms = item.platforms.split(",").map((p) => p.trim());
-            } else if (Array.isArray(item.platforms)) {
-              libraryPlatforms = item.platforms;
-            }
-          }
-
           return {
             id: gameDetails.id,
+            entry_id: item.id,
             id_user: item.id_user,
-            id_game: item.id_game,
-            status: item.status,
-            rating: item.rating,
-            started_at: item.started_at,
-            ended_at: item.ended_at,
-            times_played: item.times_played,
-            platforms: libraryPlatforms,
-            platine: item.platine,
-            commentary: item.commentary,
-            hidden: item.hidden,
-
+            id_game: gameDetails.id,
             name: gameDetails.name,
             background_image: gameDetails.background_image,
+            status: item.status || "not_started",
+            platine: item.platine || false,
+            commentary: item.commentary || null,
+            platforms: item.platforms || null,
+            started_at: item.started_at || null,
+            ended_at: item.ended_at || null,
+            rating: item.rating || null,
+            times_played: item.times_played || 0,
           };
         })
       );

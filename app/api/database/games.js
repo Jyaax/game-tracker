@@ -29,22 +29,29 @@ export const gameService = {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error in addToWishlist:", error);
+        throw error;
+      }
       return result;
     } catch (error) {
+      console.error("Error in addToWishlist:", error);
       throw error;
     }
   },
 
-  // Remove a game from the wishlist
-  removeFromWishlist: async (userId, gameId) => {
+  // Remove a game from the wishlist by its database entry ID
+  removeFromWishlist: async (userId, entryId) => {
     try {
       const { data, error } = await supabase
         .from("wishlist")
         .delete()
         .eq("id_user", userId)
-        .eq("id_game", gameId);
-      if (error) throw error;
+        .eq("id", entryId);
+      if (error) {
+        console.error("Error in removeFromWishlist:", error);
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error in removeFromWishlist:", error);
@@ -53,7 +60,7 @@ export const gameService = {
   },
 
   // Fetch the library of a user
-  getLibrary: async (userId, gameId) => {
+  getLibrary: async (userId) => {
     try {
       const { data, error } = await supabase
         .from("library")
@@ -76,7 +83,11 @@ export const gameService = {
         .eq("id_user", userId)
         .eq("id_game", gameId);
 
-      if (error) return null;
+      if (error) {
+        console.error("Error in checkGameInLibrary:", error);
+        return null;
+      }
+
       return data?.[0] || null;
     } catch (error) {
       console.error("Error checking game in library:", error);
@@ -93,7 +104,11 @@ export const gameService = {
         .eq("id_user", userId)
         .eq("id_game", gameId);
 
-      if (error) return null;
+      if (error) {
+        console.error("Error in checkGameInWishlist:", error);
+        return null;
+      }
+
       return data?.[0] || null;
     } catch (error) {
       console.error("Error checking game in wishlist:", error);
@@ -117,51 +132,33 @@ export const gameService = {
           ended_at: data.ended_at || null,
           rating: data.rating || null,
           times_played: data.times_played || 0,
-          added_at: new Date(),
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error in addToLibrary:", error);
+        throw error;
+      }
       return result;
     } catch (error) {
+      console.error("Error in addToLibrary:", error);
       throw error;
     }
   },
 
-  // Update a game in the library
-  updateLibrary: async (userId, gameId, data) => {
-    try {
-      const exists = await gameService.checkGameInLibrary(userId, gameId);
-      if (!exists) {
-        return await gameService.addToLibrary(userId, gameId, data);
-      }
-
-      const { data: result, error } = await supabase
-        .from("library")
-        .update(data)
-        .eq("id_user", userId)
-        .eq("id_game", gameId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return result;
-    } catch (error) {
-      console.error("Error updating library:", error);
-      throw new Error("Unable to update library");
-    }
-  },
-
-  // Remove a game from the library
-  removeFromLibrary: async (userId, gameId) => {
+  // Remove a game from the library by its database entry ID
+  removeFromLibrary: async (userId, entryId) => {
     try {
       const { data, error } = await supabase
         .from("library")
         .delete()
         .eq("id_user", userId)
-        .eq("id_game", gameId);
-      if (error) throw error;
+        .eq("id", entryId);
+      if (error) {
+        console.error("Error in removeFromLibrary:", error);
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error("Error in removeFromLibrary:", error);
@@ -169,27 +166,73 @@ export const gameService = {
     }
   },
 
-  updateGameVisibility: async (userId, gameId, hidden) => {
-    const { data, error } = await supabase
-      .from("library")
-      .update({ hidden })
-      .eq("id_user", userId)
-      .eq("id_game", gameId)
-      .select();
+  // Update a game in the library
+  updateLibrary: async (userId, gameId, data) => {
+    try {
+      const { data: result, error } = await supabase
+        .from("library")
+        .update({
+          status: data.status || "not_started",
+          platine: data.platine || false,
+          commentary: data.commentary || null,
+          platforms: data.platforms || null,
+          started_at: data.started_at || null,
+          ended_at: data.ended_at || null,
+          rating: data.rating || null,
+          times_played: data.times_played || 0,
+        })
+        .eq("id_user", userId)
+        .eq("id_game", gameId)
+        .select();
 
-    if (error) throw error;
-    return data;
+      if (error) {
+        console.error("Error in updateLibrary:", error);
+        throw error;
+      }
+      return result;
+    } catch (error) {
+      console.error("Error in updateLibrary:", error);
+      throw error;
+    }
   },
 
-  updateWishlistVisibility: async (userId, gameId, hidden) => {
-    const { data, error } = await supabase
-      .from("wishlist")
-      .update({ hidden })
-      .eq("id_user", userId)
-      .eq("id_game", gameId)
-      .select();
+  updateGameVisibility: async (userId, entryId, hidden) => {
+    try {
+      const { data, error } = await supabase
+        .from("library")
+        .update({ hidden })
+        .eq("id_user", userId)
+        .eq("id", entryId)
+        .select();
 
-    if (error) throw error;
-    return data;
+      if (error) {
+        console.error("Error in updateGameVisibility:", error);
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error("Error updating game visibility:", error);
+      throw error;
+    }
+  },
+
+  updateWishlistVisibility: async (userId, entryId, hidden) => {
+    try {
+      const { data, error } = await supabase
+        .from("wishlist")
+        .update({ hidden })
+        .eq("id_user", userId)
+        .eq("id", entryId)
+        .select();
+
+      if (error) {
+        console.error("Error in updateWishlistVisibility:", error);
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error("Error updating wishlist visibility:", error);
+      throw error;
+    }
   },
 };

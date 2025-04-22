@@ -9,41 +9,58 @@ import { gameService } from "@/api/database/games";
 import { useState, useEffect } from "react";
 import { GameManagementDialog } from "@/components/gameManagementDialog";
 
-export const ActionsButtons = ({ game, user }) => {
+export const ActionsButtons = ({ game: gameData, user }) => {
   const [library, setLibrary] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // Get the game object and its RAWG ID
+  const game = gameData?.game || gameData;
+  const rawgId = game?.id;
+
+  const fetchLibrary = async () => {
+    try {
+      if (!rawgId) {
+        console.error("RAWG ID is missing:", game);
+        return;
+      }
+      const libraryData = await gameService.checkGameInLibrary(user.id, rawgId);
+      setLibrary(libraryData ? [libraryData] : []);
+    } catch (error) {
+      console.error("Error fetching library:", error);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      if (!rawgId) {
+        console.error("RAWG ID is missing:", game);
+        return;
+      }
+      const wishlistData = await gameService.getWishlist(user.id);
+      setWishlist(wishlistData);
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchLibrary = async () => {
-      try {
-        const libraryData = await gameService.checkGameInLibrary(
-          user.id,
-          game.id
-        );
-        setLibrary(libraryData ? [libraryData] : []);
-      } catch (error) {
-        console.error("Error fetching library:", error);
-      }
-    };
-
-    const fetchWishlist = async () => {
-      try {
-        const wishlistData = await gameService.getWishlist(user.id);
-        setWishlist(wishlistData);
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-      }
-    };
-
+    if (!rawgId) {
+      console.error("RAWG ID is missing:", game);
+      return;
+    }
     fetchLibrary();
     fetchWishlist();
-  }, [user, game.id]);
+  }, [user, rawgId]);
 
   const handleAddToWishlist = async () => {
     try {
-      await gameService.addToWishlist(user.id, game.id);
-      setWishlist([...wishlist, { id_game: game.id }]);
+      if (!rawgId) {
+        console.error("RAWG ID is missing:", game);
+        return;
+      }
+      await gameService.addToWishlist(user.id, rawgId);
+      setWishlist([...wishlist, { id_game: rawgId }]);
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
@@ -51,8 +68,13 @@ export const ActionsButtons = ({ game, user }) => {
 
   const handleRemoveFromWishlist = async () => {
     try {
-      await gameService.removeFromWishlist(user.id, game.id);
-      setWishlist(wishlist.filter((item) => item.id_game !== game.id));
+      const wishlistItem = wishlist.find((item) => item.id_game === rawgId);
+      if (!wishlistItem) {
+        console.error("Game not found in wishlist");
+        return;
+      }
+      await gameService.removeFromWishlist(user.id, wishlistItem.id);
+      setWishlist(wishlist.filter((item) => item.id !== wishlistItem.id));
     } catch (error) {
       console.error("Error removing from wishlist:", error);
     }
@@ -60,8 +82,13 @@ export const ActionsButtons = ({ game, user }) => {
 
   const handleAddToLibrary = async () => {
     try {
-      await gameService.addToLibrary(user.id, game.id);
-      setLibrary([...library, { id_game: game.id }]);
+      if (!rawgId) {
+        console.error("RAWG ID is missing:", game);
+        return;
+      }
+      console.log("Adding to library:", rawgId);
+      await gameService.addToLibrary(user.id, rawgId);
+      setLibrary([...library, { id_game: rawgId }]);
       handleRemoveFromWishlist();
     } catch (error) {
       console.error("Error adding to library:", error);
@@ -70,23 +97,33 @@ export const ActionsButtons = ({ game, user }) => {
 
   const handleRemoveFromLibrary = async () => {
     try {
-      await gameService.removeFromLibrary(user.id, game.id);
-      setLibrary(library.filter((item) => item.id_game !== game.id));
+      const libraryItem = library.find((item) => item.id_game === rawgId);
+      if (!libraryItem) {
+        console.error("Game not found in library");
+        return;
+      }
+      await gameService.removeFromLibrary(user.id, libraryItem.id);
+      setLibrary(library.filter((item) => item.id !== libraryItem.id));
     } catch (error) {
       console.error("Error removing from library:", error);
     }
   };
 
-  const isInWishlist = wishlist.some((item) => item.id_game === game.id);
-  const isInLibrary = library.some((item) => item.id_game === game.id);
+  if (!rawgId) {
+    console.error("RAWG ID is missing:", game);
+    return null;
+  }
+
+  const isInWishlist = wishlist.some((item) => item.id_game === rawgId);
+  const isInLibrary = library.some((item) => item.id_game === rawgId);
 
   return (
     <TooltipProvider>
       <div className="flex items-center gap-2 mt-2">
         <div className="group relative flex items-center">
           <div className="absolute right-full mr-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[10px] group-hover:translate-x-0">
-            {!library.some((item) => item.id_game === game.id) &&
-              (wishlist.some((item) => item.id_game === game.id) ? (
+            {!library.some((item) => item.id_game === rawgId) &&
+              (wishlist.some((item) => item.id_game === rawgId) ? (
                 <Tooltip delayDuration={200}>
                   <TooltipTrigger asChild>
                     <Bookmark
@@ -111,7 +148,7 @@ export const ActionsButtons = ({ game, user }) => {
                   <TooltipContent>Add to wishlist</TooltipContent>
                 </Tooltip>
               ))}
-            {library.some((item) => item.id_game === game.id) ? (
+            {library.some((item) => item.id_game === rawgId) ? (
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
                   <BookX
@@ -155,6 +192,10 @@ export const ActionsButtons = ({ game, user }) => {
         category={
           isInWishlist ? "wishlist" : isInLibrary ? "library" : "wishlist"
         }
+        onUpdate={() => {
+          fetchLibrary();
+          fetchWishlist();
+        }}
       />
     </TooltipProvider>
   );

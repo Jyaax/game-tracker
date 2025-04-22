@@ -129,6 +129,9 @@ export const columns = [
             game={game}
             user={user}
             category="wishlist"
+            onUpdate={(gameId) => {
+              if (onRefresh) onRefresh(gameId);
+            }}
           />
           <TooltipProvider delayDuration={200}>
             <Tooltip>
