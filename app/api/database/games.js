@@ -130,7 +130,7 @@ export const gameService = {
           platforms: data.platforms || null,
           started_at: data.started_at || null,
           ended_at: data.ended_at || null,
-          rating: data.rating || null,
+          rating: data.rating === 0 ? 0 : data.rating || null,
           times_played: data.times_played || 0,
         })
         .select()
@@ -178,7 +178,7 @@ export const gameService = {
           platforms: data.platforms || null,
           started_at: data.started_at || null,
           ended_at: data.ended_at || null,
-          rating: data.rating || null,
+          rating: data.rating === 0 ? 0 : data.rating || null,
           times_played: data.times_played || 0,
         })
         .eq("id_user", userId)

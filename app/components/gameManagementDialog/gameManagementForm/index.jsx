@@ -227,7 +227,7 @@ export const GameManagementForm = ({
 
       // Get the actual game object if it's nested
       const gameData = game.game || game;
-      const gameId = gameData.entry_id ? gameData.id_game : gameData.id;
+      const gameId = gameData.id_game || gameData.id;
       if (!gameId) {
         console.error("Game ID is missing:", gameData);
         form.setError("root", {
@@ -245,7 +245,7 @@ export const GameManagementForm = ({
         platforms: values.platforms || null,
         started_at: formatDate(values.started_at),
         ended_at: formatDate(values.ended_at),
-        rating: values.rating || null,
+        rating: values.rating === 0 ? 0 : values.rating || null,
         times_played: values.times_played || 0,
       };
 
@@ -447,11 +447,13 @@ export const GameManagementForm = ({
                       {...field}
                       value={field.value === null ? "" : field.value}
                       onChange={(e) => {
-                        const value =
-                          e.target.value === ""
-                            ? null
-                            : parseInt(e.target.value);
-                        field.onChange(value);
+                        const inputValue = e.target.value;
+                        if (inputValue === "") {
+                          field.onChange(null);
+                        } else {
+                          const numValue = Number(inputValue);
+                          field.onChange(numValue);
+                        }
                       }}
                     />
                   </FormControl>
